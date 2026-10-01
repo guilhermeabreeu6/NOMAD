@@ -4,15 +4,17 @@ Loja de pods descartáveis em Palmas – TO. Pedidos pelo WhatsApp (63) 98123-94
 Slogan: "VAPOR SEM FRONTEIRAS". Proibida a venda para menores de 18 anos.
 
 ## Stack
-- Linguagem/framework: definido pelo Tech Lead em `docs/squad/site-mvp/03-tech-lead.md`
+- Linguagem/framework: Astro (saída estática) + TypeScript — ADR em `docs/squad/site-mvp/04-tech-lead.md`
+- Testes: Vitest (lógica em src/lib) + Playwright/Chromium + axe (E2E)
 - Banco: nenhum no MVP (catálogo em arquivo de dados versionado)
 
 ## Comandos
 - Node portátil: `export PATH="$HOME/.local/node:$PATH"` antes de qualquer `npm`/`npx` (Node v24 LTS, npm 11)
-- instalar: <definido pelo Tech Lead>
-- build:    <definido pelo Tech Lead>
-- teste:    <definido pelo Tech Lead>
-- lint:     <definido pelo Tech Lead>
+- instalar: `npm ci` (+ `npm run test:e2e:install` uma vez, para o Chromium)
+- dev:      `npm run dev`
+- build:    `npm run build` (gera `dist-vercel/` e `dist-static/`; ou `build:vercel` / `build:static`)
+- teste:    `npm test` (unitários) · `npm run test:e2e` (E2E)
+- lint:     `npm run lint` · `npm run typecheck` · tudo junto: `npm run check`
 
 ## Duas versões de deploy (mesmo código-fonte)
 1. **Vercel** — preview público para visualização (`vercel.json` na raiz).
