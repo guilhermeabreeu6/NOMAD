@@ -1,0 +1,61 @@
+# NOMAD puffs — site da loja
+
+Loja de pods descartáveis em Palmas – TO. Pedidos pelo WhatsApp (63) 98123-9498.
+Slogan: "VAPOR SEM FRONTEIRAS". Proibida a venda para menores de 18 anos.
+
+## Stack
+- Linguagem/framework: definido pelo Tech Lead em `docs/squad/site-mvp/03-tech-lead.md`
+- Banco: nenhum no MVP (catálogo em arquivo de dados versionado)
+
+## Comandos
+- Node portátil: `export PATH="$HOME/.local/node:$PATH"` antes de qualquer `npm`/`npx` (Node v24 LTS, npm 11)
+- instalar: <definido pelo Tech Lead>
+- build:    <definido pelo Tech Lead>
+- teste:    <definido pelo Tech Lead>
+- lint:     <definido pelo Tech Lead>
+
+## Duas versões de deploy (mesmo código-fonte)
+1. **Vercel** — preview público para visualização (`vercel.json` na raiz).
+2. **Domínio próprio** — build estático genérico para qualquer hospedagem (Apache/Nginx/cPanel),
+   sem dependência de recursos da Vercel. Ainda não há domínio: usar URL base configurável.
+
+## Dados do catálogo (fonte: docs/catalogo.pdf)
+| Modelo | Preço | Sabores |
+|---|---|---|
+| V55 | R$ 85 | Pineapple Ice, Uva Ice, Icy Mint |
+| V155 | R$ 110 | Pineapple Ice, Menthol, Grape Ice, Watermelon Ice, Icy Mint |
+| V400 Mix Slim | R$ 140 | Icy Mint + Peach Grape, Menthol + Mighty Melon, Mango + Passion Fruit Guava, Strawberry Grape Ice + Kiwi, Watermelon + Cherry + Grape |
+| Elfbar Pro 40K | R$ 140 | Sour Apple Ice, Strawberry Blend, Pink Lemonade, Watermelon + Peach Frost, Tropical Baja |
+
+Taxa de entrega em Palmas:
+| Região | Taxa |
+|---|---|
+| Quadras 700 Sul a 200 Norte/Sul | R$ 8 |
+| Quadras 300 Norte a 600 Norte | R$ 10 |
+| Quadras 800 a 1200 | R$ 10 |
+| Quadras 1300 a 1500 Sul | R$ 15 |
+| Santo Amaro | R$ 15 |
+| Lago Norte | R$ 20 |
+| Bertaville e Aurenys | R$ 30 |
+| Taquaralto e Lago Sul | R$ 35 |
+| Taquari | R$ 35 |
+
+Formas de pagamento: PIX, cartão de débito, cartão de crédito (na entrega).
+
+## Identidade visual (assets/brand, assets/produtos)
+- Fundo: quase preto `#131416`; texto creme `#E8DCC4`; destaque laranja `#E38A4E`; texto secundário cinza quente.
+- Tipografia: sans geométrica extra-larga e pesada para títulos (estilo "NOMAD"/"V155"),
+  serifada itálica para "puffs", rótulos em caixa alta com tracking largo.
+- Marca d'água do ícone "N" em círculo, em cinza muito escuro, nos cantos.
+- Cada sabor tem uma bolinha colorida (amarelo, azul claro, roxo, rosa, verde…), ver `assets/produtos/*.png`.
+
+## Convenções
+- Todo texto da interface em português do Brasil.
+- Mobile-first (a maioria dos clientes vem do Instagram/WhatsApp no celular).
+- Acessibilidade WCAG AA; nenhum segredo no código.
+- Nunca fazer `git push` de dentro dos agentes; o coordenador faz.
+
+## Squad Bot
+Fluxo: pm -> po -> designer -> tech-lead -> dev -> qa -> tech-lead (revisão) -> devops.
+Artefatos em docs/squad/<slug>/ (01-pm, 02-po, 03-designer, 04-tech-lead, 05-dev, 06-qa, 07-devops).
+Referência do time (Squad Bot Universal v2): `docs/squad-bot/`. Os agentes em uso são os globais (~/.claude/agents).

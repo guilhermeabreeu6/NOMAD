@@ -1,0 +1,12 @@
+node_modules/
+dist/
+dist-*/
+.vercel/
+.astro/
+coverage/
+.env
+.env.*
+!.env.example
+~$*.xlsx
+.DS_Store
+Thumbs.db
