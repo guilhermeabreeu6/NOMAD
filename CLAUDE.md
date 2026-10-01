@@ -24,7 +24,7 @@ Slogan: "VAPOR SEM FRONTEIRAS". Proibida a venda para menores de 18 anos.
 |---|---|---|
 | V55 | R$ 85 | Pineapple Ice, Uva Ice, Icy Mint |
 | V155 | R$ 110 | Pineapple Ice, Menthol, Grape Ice, Watermelon Ice, Icy Mint |
-| V400 Mix Slim | R$ 140 | Icy Mint + Peach Grape, Menthol + Mighty Melon, Mango + Passion Fruit Guava, Strawberry Grape Ice + Kiwi, Watermelon + Cherry + Grape |
+| V400 Mix Slim | R$ 140 | Icy Mint + Peach Grape, Menthol + Mighty Melon, Mango + Passion Fruit Guava, Strawberry Grape Ice + Kiwi Watermelon, Cherry + Grape |
 | Elfbar Pro 40K | R$ 140 | Sour Apple Ice, Strawberry Blend, Pink Lemonade, Watermelon + Peach Frost, Tropical Baja |
 
 Taxa de entrega em Palmas:
