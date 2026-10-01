@@ -8,14 +8,28 @@ Site da **NOMAD puffs**, loja de pods descartáveis em **Palmas – TO**. O clie
 quantidade, informa a região de entrega e a forma de pagamento, e o pedido sai pronto no
 **WhatsApp (63) 98123-9498** — sem cadastro e sem pagamento online.
 
+<h3 align="center">🛍️ <a href="https://nomad-v1.vercel.app">Acessar o site → nomad-v1.vercel.app</a></h3>
+
 > ⚠️ **Proibida a venda para menores de 18 anos.** O site tem verificação de idade obrigatória.
 > Leia também a seção [Aviso legal](#aviso-legal).
 
 ![CI](https://github.com/guilhermeabreeu6/NOMAD/actions/workflows/ci.yml/badge.svg)
 
+## Links rápidos
+| | Link |
+|---|---|
+| 🌐 **Site (produção, branch `main`)** | **https://nomad-v1.vercel.app** |
+| 🧪 Preview da branch em desenvolvimento | https://nomad-v1-git-feat-site-mvp-guilherme-s-projectssss.vercel.app <sub>(exige login na Vercel enquanto a Deployment Protection estiver ativa)</sub> |
+| 💬 Pedidos pelo WhatsApp | https://wa.me/5563981239498 |
+| 📊 Planilha de controle | [`planilha/NOMAD-puffs-controle.xlsx`](planilha/NOMAD-puffs-controle.xlsx) |
+| 📄 Catálogo oficial (PDF) | [`docs/catalogo.pdf`](docs/catalogo.pdf) |
+| ✅ CI (GitHub Actions) | https://github.com/guilhermeabreeu6/NOMAD/actions |
+| 🚀 Painel da Vercel | https://vercel.com/guilherme-s-projectssss/nomad-v1 |
+
 ---
 
 ## Sumário
+- [Visão geral do projeto](#visão-geral-do-projeto)
 - [Funcionalidades](#funcionalidades)
 - [Catálogo e taxas de entrega](#catálogo-e-taxas-de-entrega)
 - [Stack](#stack)
@@ -27,6 +41,29 @@ quantidade, informa a região de entrega e a forma de pagamento, e o pedido sai 
 - [Squad Bot — como o projeto foi construído](#squad-bot--como-o-projeto-foi-construído)
 - [Manutenção do dia a dia](#manutenção-do-dia-a-dia)
 - [Aviso legal](#aviso-legal)
+
+## Visão geral do projeto
+O projeto NOMAD puffs tem três entregas, todas versionadas neste repositório:
+
+| Entrega | O que é | Onde |
+|---|---|---|
+| **Site da loja** | Catálogo, carrinho e pedido pelo WhatsApp, em duas versões de deploy (Vercel e domínio próprio) | `src/`, `scripts/`, `deploy/` |
+| **Planilha de controle** | Vendas, estoque, valores, entregadores e mapa de taxas, com somas automáticas | `planilha/` |
+| **Squad Bot** | Time de agentes de IA que planejou, construiu, testou e publicou o site | `docs/squad/`, `docs/squad-bot/` |
+
+Pasta de trabalho dos sócios (fora do git), de onde vieram os materiais:
+```
+NOMAD - PUFFS/
+├── aparencia/        # identidade visual: logo, favicon, capa e cards dos produtos → copiados para assets/
+├── programação/
+│   ├── catalogo/     # catálogo em PDF (preços, sabores e taxas) → docs/catalogo.pdf
+│   ├── pdf squad/    # documentação do Squad Bot Universal
+│   └── squad bot/    # arquivos dos agentes → docs/squad-bot/
+└── site NOMAD/       # ESTE repositório
+```
+
+Linha do tempo (v0.1.0, 01/10/2026): estrutura e assets → planilha → PM → PO → Designer → Tech Lead (plano)
+→ Dev → QA → Tech Lead (revisão) → correções → DevOps (CI e deploy) → importação na Vercel.
 
 ## Funcionalidades
 - **Verificação 18+** antes de mostrar o catálogo (a confirmação fica lembrada no navegador).
@@ -101,9 +138,11 @@ O **mesmo código** gera duas saídas:
 ### 1. Vercel — preview
 - Build: `npm run build:vercel` → `dist-vercel/` (configurado em [`vercel.json`](vercel.json)).
 - **Sempre `noindex`**: não aparece no Google.
-- Publicar: em [vercel.com/new](https://vercel.com/new), importe `guilhermeabreeu6/NOMAD` e clique em **Deploy**
-  (as configurações vêm do `vercel.json`). Cada push gera um preview novo.
-- Para o link abrir para qualquer pessoa: **Settings → Deployment Protection** → desativar a proteção.
+- Projeto na Vercel: **`nomad-v1`**, já conectado a este repositório (configurações vêm do `vercel.json`).
+- Push/merge na `main` → atualiza a produção em **https://nomad-v1.vercel.app**.
+- Push em outra branch → gera um preview em `nomad-v1-git-<branch>-guilherme-s-projectssss.vercel.app`.
+- Previews exigem login enquanto a **Deployment Protection** estiver ativa
+  (Settings → Deployment Protection → Vercel Authentication → Disabled para liberar).
 
 ### 2. Domínio próprio — build estático
 - Build: `npm run build:static` → `dist-static/` (inclui `.htaccess` com segurança e cache).
