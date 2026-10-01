@@ -1,0 +1,11 @@
+---
+import { MODELS } from '../data/catalog';
+---
+
+<nav class="model-nav" aria-label="Modelos">
+  <div class="wrap">
+    <ul>
+      {MODELS.map((m) => <li><a class="chip" href={`#${m.id}`} data-nav={m.id}>{m.name}</a></li>)}
+    </ul>
+  </div>
+</nav>

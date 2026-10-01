@@ -1,0 +1,27 @@
+---
+import Logo from './Logo.astro';
+import Watermark from './Watermark.astro';
+---
+
+<div class="age-gate" data-age-gate role="dialog" aria-modal="true" aria-labelledby="gate-title" aria-describedby="gate-desc">
+  <Watermark />
+  <div class="age-gate__panel" data-gate-ask>
+    <Logo variant="stack" />
+    <p class="eyebrow">Verificação de idade</p>
+    <h1 id="gate-title" tabindex="-1" data-gate-title>Você tem 18 anos ou mais?</h1>
+    <p id="gate-desc">Este site é destinado a maiores de 18 anos. Proibida a venda a menores de 18 anos.</p>
+    <div class="age-gate__actions">
+      <button type="button" class="btn btn--lg" data-action="age-yes">Tenho 18 anos ou mais</button>
+      <button type="button" class="btn btn--lg btn--secondary" data-action="age-no">Sou menor de 18 anos</button>
+    </div>
+    <p class="age-gate__note">Ao continuar, você declara ser maior de idade. A idade também é conferida na entrega.</p>
+  </div>
+  <div class="age-gate__panel" data-gate-denied role="alert" hidden>
+    <Logo variant="stack" />
+    <h1 id="denied-title" tabindex="-1" data-denied-title>Acesso restrito</h1>
+    <p>O acesso a este site é permitido apenas para maiores de 18 anos.</p>
+    <div class="age-gate__actions">
+      <button type="button" class="btn btn--text" data-action="age-back">Voltar</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+---
+import Logo from './Logo.astro';
+---
+
+<header class="site-header">
+  <div class="wrap">
+    <a href="#topo" class="logo-link" aria-label="NOMAD puffs, início"><Logo /></a>
+    <button type="button" class="cart-btn" data-open-cart aria-label="Abrir carrinho, 0 itens" aria-haspopup="dialog">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+        <path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8z"></path>
+        <path d="M9 8V6a3 3 0 0 1 6 0v2"></path>
+      </svg>
+      <span class="badge" data-badge hidden aria-hidden="true">0</span>
+    </button>
+  </div>
+</header>

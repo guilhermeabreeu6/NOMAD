@@ -1,0 +1,52 @@
+---
+import '../styles/fonts.css';
+import '../styles/tokens.css';
+import '../styles/global.css';
+import '../styles/app.css';
+import syneUrl from '@fontsource/syne/files/syne-latin-800-normal.woff2?url';
+import lexendUrl from '@fontsource/lexend/files/lexend-latin-400-normal.woff2?url';
+import { CSP_META } from '../data/csp';
+import { withBase } from '../data/url';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'NOMAD puffs - Pods em Palmas - TO',
+  description = 'Catálogo de pods descartáveis NOMAD puffs. Escolha o modelo e o sabor e finalize o pedido pelo WhatsApp. Entrega em Palmas - TO. Venda proibida para menores de 18 anos.',
+} = Astro.props;
+
+// eslint-disable-next-line no-undef -- injetado via vite.define (astro.config.mjs)
+const deploy = __DEPLOY__;
+const siteUrl = deploy.siteUrl.replace(/\/+$/, '');
+const canonical = siteUrl ? new URL(withBase(''), siteUrl + '/').href : '';
+---
+
+<!doctype html>
+<html lang="pt-BR" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#131416" />
+    <meta name="referrer" content="no-referrer" />
+    {import.meta.env.PROD && <meta http-equiv="Content-Security-Policy" content={CSP_META} />}
+    {deploy.noindex && <meta name="robots" content="noindex, nofollow" />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    {canonical && <meta property="og:title" content={title} />}
+    {canonical && <meta property="og:description" content={description} />}
+    {canonical && <meta property="og:type" content="website" />}
+    {canonical && <meta property="og:url" content={canonical} />}
+    <link rel="icon" type="image/png" sizes="32x32" href={withBase('favicon-32.png')} />
+    <link rel="apple-touch-icon" href={withBase('apple-touch-icon.png')} />
+    <link rel="preload" as="font" type="font/woff2" href={syneUrl} crossorigin="anonymous" />
+    <link rel="preload" as="font" type="font/woff2" href={lexendUrl} crossorigin="anonymous" />
+    <script is:inline src={withBase('age-init.js')}></script>
+  </head>
+  <body id="topo">
+    <slot />
+  </body>
+</html>

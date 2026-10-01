@@ -1,0 +1,9 @@
+---
+import type { FlavorToken } from '../data/catalog';
+interface Props {
+  dots: readonly FlavorToken[];
+}
+const { dots } = Astro.props;
+---
+
+<span class="dots" aria-hidden="true">{dots.map((d) => <span class="dot" data-flavor={d}></span>)}</span>

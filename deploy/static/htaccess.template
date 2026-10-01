@@ -1,0 +1,44 @@
+# NOMAD puffs - build estatico generico (Apache / cPanel). Gerado por scripts/build.mjs.
+# Sem RewriteRule: o site e uma pagina unica, nao ha rotas a reescrever.
+# Base do site: {{BASE}}
+
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 404 {{BASE}}404.html
+
+<IfModule mod_headers.c>
+  Header always set Content-Security-Policy "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "no-referrer"
+  Header always set X-Frame-Options "DENY"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+  <If "%{HTTPS} == 'on' || %{HTTP:X-Forwarded-Proto} == 'https'">
+    Header always set Strict-Transport-Security "max-age=31536000"
+  </If>
+{{NOINDEX_BLOCK}}
+  # Cache: padrao 1h; assets com hash 1 ano; HTML sempre revalidado.
+  Header set Cache-Control "public, max-age=3600"
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+  <If "%{REQUEST_URI} =~ m#/_astro/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType image/avif .avif
+  AddType image/webp .webp
+  AddType font/woff2 .woff2
+  AddType text/javascript .js
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript image/svg+xml text/plain
+</IfModule>
+
+# Bloqueia arquivos ocultos (o diretorio .well-known nao e afetado: a regra casa so nomes de arquivo)
+<FilesMatch "^\.">
+  Require all denied
+</FilesMatch>

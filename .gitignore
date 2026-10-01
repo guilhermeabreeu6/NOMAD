@@ -10,3 +10,6 @@ coverage/
 ~$*.xlsx
 .DS_Store
 Thumbs.db
+test-results/
+playwright-report/
+release/

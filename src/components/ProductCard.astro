@@ -1,0 +1,54 @@
+---
+import { Picture } from 'astro:assets';
+import type { Model } from '../data/catalog';
+import { PRODUCT_IMAGES } from '../data/product-images';
+import FlavorGroup from './FlavorGroup.astro';
+import PriceTag from './PriceTag.astro';
+import QuantityStepper from './QuantityStepper.astro';
+
+interface Props {
+  model: Model;
+  eager?: boolean;
+}
+const { model, eager = false } = Astro.props;
+const image = PRODUCT_IMAGES[model.id];
+---
+
+<article id={model.id} class="product" data-product={model.id} data-name={model.name} aria-labelledby={`title-${model.id}`}>
+  <div class="product__media" data-media>
+    <Picture
+      src={image}
+      formats={['avif', 'webp']}
+      widths={[360, 540, 720, 1080]}
+      sizes="(min-width: 1200px) 270px, (min-width: 640px) 45vw, min(100vw - 48px, 360px)"
+      quality={72}
+      alt={`Card do catálogo NOMAD puffs: ${model.name}`}
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+    />
+    <div class="product__broken" data-broken hidden>
+      <span class="eyebrow">N</span>
+      <span>Imagem indisponível</span>
+    </div>
+  </div>
+  <div class="product__panel">
+    <p class="eyebrow">Pod descartável</p>
+    <h3 class="product__name" id={`title-${model.id}`}>
+      <span class="visually-hidden">{model.name}</span>
+      <span aria-hidden="true" data-title>{model.title}</span>
+      {model.subtitle && <span class="serif" aria-hidden="true">{model.subtitle}</span>}
+    </h3>
+    <PriceTag cents={model.priceCents} />
+    <FlavorGroup model={model} />
+    <div class="qty-row">
+      <label class="eyebrow" for={`qty-${model.id}`}>Quantidade</label>
+      <QuantityStepper id={`qty-${model.id}`} label={model.name} />
+    </div>
+    <p class="alert alert--info" data-qty-msg role="status" hidden>
+      Máximo de 10 unidades por item. Para mais, fale com a gente no WhatsApp.
+    </p>
+    <button type="button" class="btn btn--lg" data-action="add" disabled={model.flavors.length === 0}>
+      <span data-add-label>Adicionar ao carrinho</span>
+    </button>
+  </div>
+</article>

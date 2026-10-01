@@ -1,0 +1,11 @@
+---
+import { formatBRL, formatBRLShort } from '../lib/money';
+interface Props {
+  cents: number;
+}
+const { cents } = Astro.props;
+---
+
+<span class="price" role="img" aria-label={formatBRL(cents)}>
+  <span class="price__cur" aria-hidden="true">R$</span><span class="price__num" aria-hidden="true">{formatBRLShort(cents)}</span>
+</span>

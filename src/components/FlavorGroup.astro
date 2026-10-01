@@ -1,0 +1,30 @@
+---
+import type { Model } from '../data/catalog';
+import FlavorDots from './FlavorDots.astro';
+interface Props {
+  model: Model;
+}
+const { model } = Astro.props;
+const errId = `err-${model.id}`;
+---
+
+<fieldset class="flavors" data-flavors>
+  <legend class="eyebrow"><span class="visually-hidden">Sabor de {model.name}. </span><span aria-hidden="true">Sabores · {model.flavors.length}</span></legend>
+  {
+    model.flavors.length === 0 ? (
+      <p class="note">Sabores indisponíveis no momento</p>
+    ) : (
+      model.flavors.map((f) => (
+        <label class="flavor">
+          <input type="radio" name={`flavor-${model.id}`} value={f.id} />
+          <FlavorDots dots={f.dots} />
+          <span class="flavor__name">{f.name}</span>
+          <svg class="flavor__check" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
+            <path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </label>
+      ))
+    )
+  }
+  <p class="field-error" id={errId} data-error="flavor" role="alert" hidden>Escolha um sabor</p>
+</fieldset>

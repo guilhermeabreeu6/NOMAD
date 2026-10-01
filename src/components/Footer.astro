@@ -1,0 +1,24 @@
+---
+import { STORE } from '../data/catalog';
+import Logo from './Logo.astro';
+import Watermark from './Watermark.astro';
+const wa = `https://wa.me/${STORE.whatsappE164}`;
+---
+
+<footer class="site-footer">
+  <Watermark />
+  <div class="wrap">
+    <Logo />
+    <p class="eyebrow">Vapor sem fronteiras</p>
+    <p>Pedidos pelo WhatsApp <a href={wa} rel="noopener noreferrer" target="_blank">{STORE.whatsappDisplay}</a></p>
+    <p class="legal">
+      Conteúdo para maiores de 18 anos. Proibida a venda a menores de 18 anos. A idade pode ser conferida no ato da
+      entrega.
+    </p>
+    <p class="note">Preços e sabores sujeitos a disponibilidade. Entregas apenas em Palmas - TO.</p>
+    <p class="note">
+      Seu carrinho e a confirmação de idade ficam salvos apenas neste navegador. O pedido segue para o WhatsApp,
+      sujeito à política do WhatsApp. Não coletamos nome, endereço nem telefone neste site.
+    </p>
+  </div>
+</footer>
