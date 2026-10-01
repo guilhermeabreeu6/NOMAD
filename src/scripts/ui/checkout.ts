@@ -4,7 +4,7 @@ import { formatBRL } from '../../lib/money';
 import { computeTotals, parseRegionChoice, validateCheckout } from '../../lib/order';
 import { buildOrderMessage, buildWhatsAppUrl } from '../../lib/whatsapp';
 import type { Store } from '../store';
-import { actionOf, qs, qsa, setText } from './dom';
+import { actionOf, qs, qsa, setDescribedBy, setText } from './dom';
 import type { Announcer } from './live-region';
 
 interface Options {
@@ -49,6 +49,8 @@ export function initCheckout({ dialog, store, live, goStep }: Options): Checkout
     summaryError.hidden = true;
     select.removeAttribute('aria-invalid');
     paymentGroup.removeAttribute('aria-invalid');
+    setDescribedBy(select, regionError.id, false);
+    setDescribedBy(paymentGroup, paymentError.id, false);
   };
 
   const hideSent = (): void => {
@@ -94,12 +96,14 @@ export function initCheckout({ dialog, store, live, goStep }: Options): Checkout
     store.setRegion(select.value || null);
     regionError.hidden = true;
     select.removeAttribute('aria-invalid');
+    setDescribedBy(select, regionError.id, false);
   });
 
   paymentGroup.addEventListener('change', () => {
     store.setPayment(paymentRadios.find((r) => r.checked)?.value ?? null);
     paymentError.hidden = true;
     paymentGroup.removeAttribute('aria-invalid');
+    setDescribedBy(paymentGroup, paymentError.id, false);
   });
 
   form.addEventListener('submit', (ev) => {
@@ -124,10 +128,12 @@ export function initCheckout({ dialog, store, live, goStep }: Options): Checkout
       if (errors.includes('region')) {
         regionError.hidden = false;
         select.setAttribute('aria-invalid', 'true');
+        setDescribedBy(select, regionError.id, true);
       }
       if (errors.includes('payment')) {
         paymentError.hidden = false;
         paymentGroup.setAttribute('aria-invalid', 'true');
+        setDescribedBy(paymentGroup, paymentError.id, true);
       }
       if (errors.length >= 2) {
         summaryError.hidden = false;

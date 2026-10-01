@@ -452,3 +452,47 @@ Sempre antes: `export PATH="$HOME/.local/node:$PATH"`
 - teste: `npm test` (Vitest) | `npm run test:e2e` (builds + Playwright Chromium)
 - lint: `npm run lint` | typecheck: `npm run typecheck` | tudo: `npm run check`
 - Stack: Astro 7 estático + TypeScript 6.0 + CSS com tokens; ADR em `docs/squad/site-mvp/04-tech-lead.md` (o CLAUDE.md hoje aponta para `03-tech-lead.md`, corrigir o caminho).
+
+---
+
+## Revisão
+
+Data: 2026-10-01. Escopo: `git diff main...HEAD` na branch `feat/site-mvp` (commits ee15933, 8f3e15e, 1dcb002, cadd976; binários de imagem ignorados).
+
+### Verificações executadas (de fato, nesta revisão)
+| Comando | Resultado |
+|---|---|
+| `npm run lint` | exit 0, 0 problemas |
+| `npm run typecheck` | `Result (64 files): 0 errors, 0 warnings, 0 hints` |
+| `npm test` | `Test Files 9 passed (9) / Tests 178 passed (178)` |
+| `npm run build` | ok; `dist-vercel` e `dist-static` (base=/, noindex=false), 2 páginas |
+| `npm run test:e2e` | não reexecutado (QA: 158 passed, 11 skipped, inclui o `test.fail` do BUG-01) |
+
+Medições do build: JS de cliente 17,3 KB (6,5 KB gzip, 1 arquivo); CSS 22,3 KB (5,1 KB gzip); 5 woff2 (2 com preload); maior AVIF ~44 KB (1080w); `index.html` 37,5 KB; nenhum `<script>` sem `src` e nenhum `style=` no HTML; 1º card `loading="eager"`, demais `lazy`, todos com `width/height`. Orçamento da 9.3 atendido.
+
+### Veredito: **APROVADO**
+
+Nenhum achado crítico. Lógica de dinheiro/taxa/total, mensagem RN12 e URL `wa.me` estão corretas e com fonte única (`resolveCart` -> `computeTotals` -> `formatBRL` usados pela tela e pela mensagem). Segurança aderente ao plano: CSP idêntica nos dois alvos (travada por teste), sem `unsafe-inline`, sem sinks de HTML (grep e lint limpos), localStorage tratado como não confiável (`loadCart` valida tipo, catálogo, inteiro, funde duplicatas e nunca lê preço; gate só aceita `'1'`). Arquitetura conforme ADR-001 (Astro estático, `src/lib` puro, DOM em `src/scripts/ui`, `product-images` fora do cliente). Os desvios registrados no `05-dev.md` (vite.define, componentes como classes CSS, CSS global em `app.css`, sem loading de 1,2 s) são aceitos.
+
+**Condição para o merge em `main` (não bloqueia o preview na Vercel):** corrigir BUG-01 e o aviso A1 nesta branch. São mudanças pequenas, de baixo risco, já cobertas por teste; não exigem nova revisão completa, apenas `npm run check` + `npm run test:e2e` verdes (com o `test.fail` removido).
+
+### Crítico
+Nenhum.
+
+### Aviso
+- **A1 (BUG-01 do QA) - limite de 10 no carrinho sem mensagem visível.** `src/scripts/ui/cart-dialog.ts:181-190` (e `:215-223` para digitação de 11+). Contraria o Gherkin "Quantidade máxima por item" e o plano 6.9; o card do catálogo faz certo (`product-card.ts:38-43`). **Decisão: corrigir agora**, antes do merge. Correção: adicionar ao `<template id="tpl-line">` (`src/components/CartDialog.astro:111-127`) um `<p class="alert alert--info" data-l-max role="status" hidden>Máximo de 10 unidades por item. Para mais, fale com a gente no WhatsApp.</p>`; em `line-inc` e no `change`, quando `r.hitMax`/`c.clamped === 'max'`, mostrar esse parágrafo da linha (e escondê-lo em `line-dec`/qty < 10); manter o anúncio do subtotal no live region. Remover o `test.fail` de `tests/e2e/qa-edge.spec.ts:190`.
+- **A2 - descrições de erro sempre lidas por leitores de tela.** `src/components/CartDialog.astro:53` (`aria-describedby="region-help region-error"`), `:62` (`payment-help payment-error`) e `src/components/FlavorGroup.astro:11` (`aria-describedby={errId}`) referenciam elementos com `hidden`. Pelo cálculo de nome acessível, conteúdo oculto referenciado diretamente por `aria-describedby` **é** incluído (Chrome/TalkBack/NVDA leem): o usuário ouve "Escolha sua região de entrega"/"Escolha um sabor" mesmo sem erro. O axe não pega isso. Correção: deixar no markup só o `*-help`; em `checkout.ts` (`send`/`clearErrors`, linhas 46-52 e 123-131) e `product-card.ts` (linhas 50-53 e 91-95) acrescentar/remover o id do erro em `aria-describedby` junto com o `hidden`. Recomendo corrigir junto com A1 (mesma rodada).
+
+### Sugestão
+- **S1** `src/scripts/ui/product-card.ts:101-104`: o anúncio diz "N unidades, adicionado" mesmo quando o teto cortou a soma (8+5 adiciona 2; linha já em 10 adiciona 0). Anunciar a quantidade efetiva (diferença antes/depois) ou "Máximo de 10 unidades por item" quando `hitMax`.
+- **S2** `src/scripts/ui/cart-dialog.ts:184`: recompõe a chave com template literal; usar `lineKey` de `src/lib/cart.ts` (fonte única do formato da chave).
+- **S3** `src/scripts/ui/cart-dialog.ts:105-107`: indentação quebrada dentro do `for`; considerar Prettier (já previsto como opcional) para evitar isso.
+- **S4** `src/components/Header.astro:6`: falta espaço entre `class="logo-link"` e `aria-label` (o navegador tolera, mas é erro de parse HTML).
+- **S5** `vercel.json:31-34`: com `cleanUrls: true` as requisições chegam como `/` e `/404`, então a regra `/(.*)\.html` quase nunca casa. Funciona hoje porque o default da Vercel para HTML já é `max-age=0, must-revalidate`; se quiser explícito, usar `source` que case `/` e caminhos sem extensão (ex. `"/((?!_astro/).*)"` antes da regra de `_astro`).
+- **S6** `deploy/static/htaccess.template:56-58`: em hospedagens atrás de proxy/CDN (`%{HTTPS}` off no origin) o HSTS não sai; documentar no README ou aceitar `X-Forwarded-Proto`. Template ainda não validado em Apache real (risco T8, pendência do DevOps).
+- **S7** `eslint.config.js:6-21`: ampliar a lista de sinks com `DOMParser.parseFromString`, `createContextualFragment` e atribuição a `srcdoc` (defesa em profundidade; nenhum uso hoje).
+- **S8** Escopo do PR: o commit `ee15933 feat(planilha)` (`planilha/gerar_planilha.py`, `planilha/NOMAD-puffs-controle.xlsx` 166 KB) não pertence ao site-mvp; preferir PR separado ou mencioná-lo explicitamente na descrição do PR.
+- **S9** `docs/squad/site-mvp/02-po.md` RN1 (V400) ainda tem o erro de digitação apontado pelo QA; o `CLAUDE.md` já aponta para `04-tech-lead.md` (pendência anterior resolvida).
+
+### Pendências não verificáveis aqui (para DevOps/QA manual, não bloqueiam)
+Lighthouse mobile, leitor de tela real, envio real ao WhatsApp em Android/iOS (M3), Apache/Nginx reais, `npm audit --omit=dev` antes do deploy.

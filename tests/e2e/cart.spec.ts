@@ -50,6 +50,19 @@ test.describe('carrinho', () => {
     });
   }
 
+  test('carrinho: digitar 11 mostra o limite e diminuir esconde', async ({ app: page }) => {
+    await addToCart(page, 'v55', 'Icy Mint', 2);
+    const dialog = await openCart(page);
+    const msg = dialog.getByText('Máximo de 10 unidades por item. Para mais, fale com a gente no WhatsApp.');
+    await expect(msg).toBeHidden();
+    await dialog.locator('[data-l-qty]').fill('11');
+    await dialog.locator('[data-l-qty]').blur();
+    await expect(dialog.locator('[data-l-qty]')).toHaveValue('10');
+    await expect(msg).toBeVisible();
+    await dialog.getByRole('button', { name: /Diminuir quantidade/ }).click();
+    await expect(msg).toBeHidden();
+  });
+
   test('remover recalcula e carrinho vazio mostra estado vazio', async ({ app: page }) => {
     await addToCart(page, 'v55', 'Icy Mint', 1);
     await addToCart(page, 'v155', 'Menthol', 1);

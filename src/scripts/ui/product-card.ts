@@ -1,8 +1,8 @@
 import { MAX_QTY_PER_ITEM, findModel } from '../../data/catalog';
-import { addItem, clampQty } from '../../lib/cart';
+import { addItem, clampQty, lineKey } from '../../lib/cart';
 import { formatBRL } from '../../lib/money';
 import type { Store } from '../store';
-import { actionOf, qs, qsa, setText } from './dom';
+import { actionOf, qs, qsa, setDescribedBy, setText } from './dom';
 import type { Announcer } from './live-region';
 
 function initCard(card: HTMLElement, store: Store, live: Announcer): void {
@@ -49,6 +49,7 @@ function initCard(card: HTMLElement, store: Store, live: Announcer): void {
 
   const clearFlavorError = (): void => {
     flavorError.hidden = true;
+    setDescribedBy(group, flavorError.id, false);
     group.classList.remove('has-error');
   };
 
@@ -90,16 +91,23 @@ function initCard(card: HTMLElement, store: Store, live: Announcer): void {
         const flavorId = selectedFlavorId();
         if (!flavorId) {
           flavorError.hidden = false;
+          setDescribedBy(group, flavorError.id, true);
           group.classList.add('has-error');
           radios[0]?.focus();
           return;
         }
         const n = qty();
+        const key = lineKey(modelId, flavorId);
+        const before = store.get().cart.find((l) => lineKey(l.modelId, l.flavorId) === key)?.qty ?? 0;
         const result = addItem(store.get().cart, modelId, flavorId, n);
         store.setCart(result.cart);
+        const added = (result.cart.find((l) => lineKey(l.modelId, l.flavorId) === key)?.qty ?? 0) - before;
         const flavorName = model.flavors.find((f) => f.id === flavorId)?.name ?? '';
+        const unitWord = added === 1 ? 'unidade' : 'unidades';
         live.announce(
-          `${model.name} ${flavorName}, ${String(n)} ${n === 1 ? 'unidade' : 'unidades'}, adicionado ao carrinho`,
+          added === 0
+            ? `${model.name} ${flavorName}: máximo de 10 unidades por item, nada foi adicionado`
+            : `${model.name} ${flavorName}, ${String(added)} ${unitWord}, adicionado ao carrinho${result.hitMax ? '. Máximo de 10 unidades por item' : ''}`,
         );
         if (result.hitMax) showMax();
         else qtyMsg.hidden = true;

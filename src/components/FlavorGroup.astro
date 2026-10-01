@@ -8,7 +8,7 @@ const { model } = Astro.props;
 const errId = `err-${model.id}`;
 ---
 
-<fieldset class="flavors" data-flavors aria-describedby={errId}>
+<fieldset class="flavors" data-flavors>
   <legend class="eyebrow"><span class="visually-hidden">Sabor de {model.name}. </span><span aria-hidden="true">Sabores · {model.flavors.length}</span></legend>
   {
     model.flavors.length === 0 ? (

@@ -30,3 +30,11 @@ export function actionOf(target: EventTarget | null): { el: HTMLElement; action:
 export function formatCount(units: number): string {
   return units === 1 ? '1 item' : `${String(units)} itens`;
 }
+
+/** Inclui/remove um id em aria-describedby (erros só são descritos quando visíveis). */
+export function setDescribedBy(el: Element, id: string, on: boolean): void {
+  const ids = (el.getAttribute('aria-describedby') ?? '').split(/\s+/).filter((x) => x !== '' && x !== id);
+  if (on) ids.push(id);
+  if (ids.length > 0) el.setAttribute('aria-describedby', ids.join(' '));
+  else el.removeAttribute('aria-describedby');
+}

@@ -47,3 +47,14 @@ Nota Git Bash: argumentos que começam com `/` (ex. `--base /`) sofrem conversã
 - A imagem dos cards contém preço "queimado"; a UI é a fonte de verdade.
 - Gate é declaratório; HTML do catálogo está no documento (limitação aceita R5).
 - E2E do pedido grande leva ~20 s (18 inclusões).
+
+## Correções pós-revisão
+Origem: seção "## Revisão" do `04-tech-lead.md` e BUG-01 do `06-qa.md`.
+- **A1 / BUG-01**: cada linha do carrinho (`tpl-line` em `CartDialog.astro`) tem `<p data-l-max role="status" hidden>` com a mensagem de limite; `cart-dialog.ts` mostra no "+" em 10 e ao digitar 11 ou mais, e esconde ao diminuir (`toggleMax`). Removido o `test.fail` de `qa-edge.spec.ts`; novo E2E em `cart.spec.ts` (digitar 11 / diminuir).
+- **A2**: `aria-describedby` de região, pagamento e sabor só referencia o erro enquanto ele está visível (helper `setDescribedBy` em `dom.ts`, usado em `checkout.ts` e `product-card.ts`). Novo E2E em `checkout.spec.ts` confere com/sem erro.
+- **S1**: anúncio ao adicionar usa a quantidade efetivamente adicionada (e avisa o máximo/nada adicionado).
+- **S2**: `cart-dialog.ts` usa `lineKey`. **S3**: indentação corrigida. **S4**: espaço em `Header.astro`.
+- **S6**: `.htaccess` aceita `X-Forwarded-Proto: https` para HSTS; nota no README.
+- **S7**: eslint proíbe também `parseFromString`, `createContextualFragment` e `srcdoc`.
+- **S9**: RN1 do `02-po.md` corrigida (5 sabores do V400 do CLAUDE.md).
+- S5 (opcional) e S8 não aplicados.

@@ -1,5 +1,5 @@
 import { findModel } from '../../data/catalog';
-import { clampQty, countUnits, removeLine, resolveCart, setQty, subtotalCents, type ResolvedLine } from '../../lib/cart';
+import { clampQty, countUnits, lineKey, removeLine, resolveCart, setQty, subtotalCents, type ResolvedLine } from '../../lib/cart';
 import { formatBRL } from '../../lib/money';
 import type { State, Store } from '../store';
 import { initCheckout } from './checkout';
@@ -103,8 +103,8 @@ export function initCartDialog(store: Store, live: Announcer): void {
       summaryEl.hidden = empty;
       clearArea.hidden = empty;
       for (const f of foots) {
-      if (f.dataset['stepFoot'] === 'cart') f.hidden = empty;
-    }
+        if (f.dataset['stepFoot'] === 'cart') f.hidden = empty;
+      }
       setText(subtotalEl, formatBRL(subtotal));
       const keys = new Set(lines.map((l) => l.key));
       for (const [key, row] of rows) {
@@ -122,6 +122,11 @@ export function initCartDialog(store: Store, live: Announcer): void {
       if (empty) showStep('cart', true);
     }
     checkout.render();
+  }
+
+  function toggleMax(key: string, show: boolean): void {
+    const msg = rows.get(key)?.querySelector<HTMLElement>('[data-l-max]');
+    if (msg) msg.hidden = !show;
   }
 
   function open(from: HTMLElement | null): void {
@@ -181,10 +186,11 @@ export function initCartDialog(store: Store, live: Announcer): void {
       case 'line-dec':
       case 'line-inc': {
         const key = keyOf(hit.el);
-        const cur = cart.find((l) => `${l.modelId}::${l.flavorId}` === key)?.qty ?? 1;
+        const cur = cart.find((l) => lineKey(l.modelId, l.flavorId) === key)?.qty ?? 1;
         const next = hit.action === 'line-dec' ? cur - 1 : cur + 1;
         const r = setQty(cart, key, Math.max(1, next));
         store.setCart(r.cart);
+        toggleMax(key, r.hitMax);
         const after = resolveCart(store.get().cart);
         live.announce(`Subtotal ${formatBRL(subtotalCents(after))}${r.hitMax ? '. Máximo de 10 unidades por item' : ''}`);
         break;
@@ -216,9 +222,11 @@ export function initCartDialog(store: Store, live: Announcer): void {
     const input = ev.target;
     if (!(input instanceof HTMLInputElement) || !input.hasAttribute('data-l-qty')) return;
     const c = clampQty(input.value);
-    const r = setQty(store.get().cart, keyOf(input), c.qty);
+    const key = keyOf(input);
+    const r = setQty(store.get().cart, key, c.qty);
     input.value = String(c.qty);
     store.setCart(r.cart);
+    toggleMax(key, c.clamped === 'max');
     live.announce(`Subtotal ${formatBRL(subtotalCents(resolveCart(store.get().cart)))}`);
   });
 

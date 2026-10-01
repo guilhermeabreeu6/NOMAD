@@ -15,3 +15,6 @@ Astro (estático) + TypeScript. Comandos em `CLAUDE.md`. Node portátil: `export
 
 ## Preços
 As imagens em `assets/produtos` têm o preço desenhado; ao mudar `src/data/catalog.ts`, refaça o PNG.
+
+## Observação HSTS
+O `.htaccess` envia HSTS quando `%{HTTPS}` está ativo ou `X-Forwarded-Proto: https` (proxy/CDN). Sem nenhum dos dois, configure HSTS no painel da hospedagem.

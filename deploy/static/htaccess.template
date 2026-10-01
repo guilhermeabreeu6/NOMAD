@@ -13,7 +13,7 @@ ErrorDocument 404 {{BASE}}404.html
   Header always set X-Frame-Options "DENY"
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
   Header always set Cross-Origin-Opener-Policy "same-origin"
-  <If "%{HTTPS} == 'on'">
+  <If "%{HTTPS} == 'on' || %{HTTP:X-Forwarded-Proto} == 'https'">
     Header always set Strict-Transport-Security "max-age=31536000"
   </If>
 {{NOINDEX_BLOCK}}

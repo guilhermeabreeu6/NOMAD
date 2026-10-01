@@ -185,9 +185,8 @@ test.describe('carrinho e foco (bordas)', () => {
     await expect(page.locator('[aria-live]').filter({ hasText: 'Máximo de 10 unidades por item' })).toHaveCount(1);
   });
 
-  // BUG-01 (ver 06-qa.md): no carrinho o limite só é anunciado a leitores de tela; PO exige mensagem visível.
+  // BUG-01 (corrigido): o carrinho mostra a mensagem de limite visível.
   test('diálogo: limite de 10 mostra mensagem VISÍVEL (PO: Quantidade máxima por item)', async ({ app: page }) => {
-    test.fail(true, 'BUG-01: mensagem de máximo não é exibida visualmente no carrinho');
     await addToCart(page, 'v55', 'Icy Mint', 10);
     const dialog = await openCart(page);
     await dialog.getByRole('button', { name: /Aumentar quantidade/ }).click();

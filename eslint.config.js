@@ -16,6 +16,14 @@ const htmlSinks = [
     selector: "CallExpression[callee.object.name='document'][callee.property.name='write']",
     message: 'Proibido document.write.',
   },
+  {
+    selector: "CallExpression[callee.property.name=/^(parseFromString|createContextualFragment)$/]",
+    message: 'Proibido parsear HTML de string.',
+  },
+  {
+    selector: "AssignmentExpression[left.property.name='srcdoc']",
+    message: 'Proibido atribuir srcdoc.',
+  },
   { selector: "CallExpression[callee.name='eval']", message: 'Proibido eval.' },
   { selector: "NewExpression[callee.name='Function']", message: 'Proibido new Function.' },
 ];

@@ -50,7 +50,7 @@ import { formatBRL } from '../lib/money';
     </div>
     <div class="field">
       <label for="region">Região de entrega (Palmas - TO)</label>
-      <select id="region" name="region" class="select" data-region aria-describedby="region-help region-error">
+      <select id="region" name="region" class="select" data-region aria-describedby="region-help">
         <option value="">Selecione sua região</option>
         {REGIONS.map((r) => <option value={r.id}>{`${r.label} - ${formatBRL(r.feeCents)}`}</option>)}
         <option value={OTHER_REGION_ID}>{OTHER_REGION_LABEL}</option>
@@ -59,7 +59,7 @@ import { formatBRL } from '../lib/money';
       <p class="fee-chip" data-fee-chip hidden></p>
       <p class="field-error" id="region-error" data-error="region" hidden>Escolha sua região de entrega</p>
     </div>
-    <fieldset class="field radio-cards" data-payment aria-describedby="payment-help payment-error">
+    <fieldset class="field radio-cards" data-payment aria-describedby="payment-help">
       <legend>Forma de pagamento</legend>
       <p class="field__help" id="payment-help">Pagamento na entrega.</p>
       {
@@ -116,6 +116,7 @@ import { formatBRL } from '../lib/money';
       </div>
       <div class="cart-line__flavor"><span class="dots" data-l-dots aria-hidden="true"></span><span data-l-flavor></span></div>
       <div class="cart-line__unit" data-l-unit></div>
+      <p class="alert alert--info" data-l-max role="status" hidden>Máximo de 10 unidades por item. Para mais, fale com a gente no WhatsApp.</p>
       <div class="cart-line__bottom">
         <div class="stepper">
           <button type="button" data-action="line-dec">&minus;</button>

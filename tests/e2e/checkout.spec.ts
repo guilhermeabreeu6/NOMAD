@@ -41,6 +41,30 @@ test.describe('checkout', () => {
     expect(popups).toEqual([]);
   });
 
+  test('aria-describedby só inclui o erro quando ele está visível', async ({ app: page }) => {
+    const c = page.locator('#v55');
+    const group = c.locator('[data-flavors]');
+    await expect(group).not.toHaveAttribute('aria-describedby', /err-v55/);
+    await c.getByRole('button', { name: /Adicionar ao carrinho/ }).click();
+    await expect(group).toHaveAttribute('aria-describedby', /err-v55/);
+    await c.getByRole('radio', { name: 'Icy Mint' }).check();
+    await expect(group).not.toHaveAttribute('aria-describedby', /err-v55/);
+    await c.getByRole('button', { name: /Adicionar ao carrinho/ }).click();
+
+    const dialog = await toCheckout(page);
+    const region = dialog.getByLabel('Região de entrega (Palmas - TO)');
+    const payment = dialog.locator('[data-payment]');
+    await expect(region).toHaveAttribute('aria-describedby', 'region-help');
+    await expect(payment).toHaveAttribute('aria-describedby', 'payment-help');
+    await dialog.getByRole('button', { name: 'Enviar pedido pelo WhatsApp' }).click();
+    await expect(region).toHaveAttribute('aria-describedby', /region-error/);
+    await expect(payment).toHaveAttribute('aria-describedby', /payment-error/);
+    await region.selectOption('taquari');
+    await dialog.getByRole('radio', { name: 'PIX' }).check();
+    await expect(region).toHaveAttribute('aria-describedby', 'region-help');
+    await expect(payment).toHaveAttribute('aria-describedby', 'payment-help');
+  });
+
   test('formas de pagamento exatas, sem pré-seleção', async ({ app: page }) => {
     await addToCart(page, 'v55', 'Icy Mint', 1);
     const dialog = await toCheckout(page);
