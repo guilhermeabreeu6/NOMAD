@@ -13,6 +13,9 @@ Astro (estático) + TypeScript. Comandos em `CLAUDE.md`. Node portátil: `export
 3. Nginx: veja `deploy/static/nginx.conf.example`.
 4. `robots.txt` só vale na raiz do domínio; em subpasta copie-o para a raiz se quiser controlar indexação.
 
+## Pacote para domínio próprio
+`npm run package:static` gera `release/nomad-site-static-<versao>.zip` (conteúdo na raiz, inclui `.htaccess`). Guia completo de Vercel, cPanel/Nginx e checklist: `docs/squad/site-mvp/07-devops.md`. CI: `.github/workflows/ci.yml`. Mudanças: `CHANGELOG.md`.
+
 ## Preços
 As imagens em `assets/produtos` têm o preço desenhado; ao mudar `src/data/catalog.ts`, refaça o PNG.
 

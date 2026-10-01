@@ -9,6 +9,7 @@
     "build": "npm run build:vercel && npm run build:static",
     "build:vercel": "node scripts/build.mjs --target=vercel",
     "build:static": "node scripts/build.mjs --target=static",
+    "package:static": "node scripts/build.mjs --target=static && node scripts/package-static.mjs",
     "preview:vercel": "node scripts/serve-static.mjs --dir dist-vercel --port 4321 --base /",
     "preview:static": "node scripts/serve-static.mjs --dir dist-static --port 4322",
     "test": "vitest run",
