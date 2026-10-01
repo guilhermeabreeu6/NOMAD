@@ -1,0 +1,33 @@
+# Equivalente Nginx do .htaccess (documentacao; nao e publicado).
+# Substitua {{BASE}} pelo BASE_PATH usado no build (ex.: / ou /loja/) e o root pela pasta com o conteudo de dist-static/.
+server {
+  listen 80;
+  server_name exemplo.com.br;
+  root /var/www/nomad;
+  index index.html;
+  gzip on;
+  gzip_types text/css text/javascript application/javascript image/svg+xml text/plain;
+
+  add_header Content-Security-Policy "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests" always;
+  add_header X-Content-Type-Options "nosniff" always;
+  add_header Referrer-Policy "no-referrer" always;
+  add_header X-Frame-Options "DENY" always;
+  add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()" always;
+  add_header Cross-Origin-Opener-Policy "same-origin" always;
+  # add_header X-Robots-Tag "noindex, nofollow" always;   # somente se NOINDEX=true
+
+  error_page 404 {{BASE}}404.html;
+
+  location {{BASE}} {
+    try_files $uri $uri/ =404;
+  }
+
+  location {{BASE}}_astro/ {
+    expires 1y;
+    add_header Cache-Control "public, immutable";
+  }
+
+  location ~ /\.(?!well-known) {
+    deny all;
+  }
+}

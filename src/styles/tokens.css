@@ -1,0 +1,94 @@
+/* Tokens do 03-design.md (secao 2). Fonte unica de cor, tipografia, espacamento, raio e movimento. */
+:root {
+  --color-bg: #131416;
+  --color-surface: #1a1b1e;
+  --color-surface-2: #222326;
+  --color-line: #2c2d31;
+  --color-line-strong: #4a4b50;
+  --color-field-border: #6e6f74;
+  --color-watermark: #1f2120;
+  --color-text: #e8dcc4;
+  --color-text-muted: #a39b8b;
+  --color-accent: #e38a4e;
+  --color-accent-hover: #ee9a60;
+  --color-accent-press: #cc7840;
+  --color-on-accent: #131416;
+  --color-error: #ff6b5e;
+  --color-error-bg: #2a1716;
+  --color-success: #5ed6ae;
+  --color-focus: #f5e9cf;
+  --color-overlay: rgba(10, 10, 12, 0.72);
+
+  --flavor-pineapple: #f2ca50;
+  --flavor-grape: #8e5bd9;
+  --flavor-mint: #5ed6ae;
+  --flavor-menthol: #8dd3f5;
+  --flavor-watermelon: #ee5f7d;
+  --flavor-peach: #f4a07a;
+  --flavor-melon: #a5db5f;
+  --flavor-mango: #f5a623;
+  --flavor-passion: #e0507a;
+  --flavor-strawberry: #e8434e;
+  --flavor-kiwi: #7dc23f;
+  --flavor-cherry: #c4243f;
+  --flavor-apple: #a0db48;
+  --flavor-lemonade: #f4a0c8;
+  --flavor-tropical: #3cc9b8;
+
+  --font-display: 'Syne', 'Arial Black', system-ui, sans-serif;
+  --font-serif: 'Lora', Georgia, serif;
+  --font-ui: 'Lexend', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --fs-display: 56px;
+  --fs-model: 44px;
+  --fs-price: 40px;
+  --fs-h2: 28px;
+  --fs-body: 16px;
+  --fs-small: 14px;
+  --fs-label: 12px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+  --radius-full: 999px;
+
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 8px 24px rgba(0, 0, 0, 0.35);
+  --shadow-sheet: 0 -12px 40px rgba(0, 0, 0, 0.55);
+  --shadow-fab: 0 6px 20px rgba(0, 0, 0, 0.5);
+
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-fast: 120ms;
+  --dur: 220ms;
+  --dur-slow: 360ms;
+
+  --hit-min: 44px;
+  --gutter: 24px;
+  --header-h: 64px;
+  --nav-h: 52px;
+  --legal-h: 36px;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --gutter: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --fs-display: 96px;
+    --fs-model: 56px;
+    --fs-price: 48px;
+    --fs-h2: 36px;
+  }
+}

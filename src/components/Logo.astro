@@ -1,0 +1,15 @@
+---
+interface Props {
+  variant?: 'horizontal' | 'stack';
+}
+const { variant = 'horizontal' } = Astro.props;
+---
+
+<span class:list={['logo', { 'logo--stack': variant === 'stack' }]}>
+  <svg class="logo__icon" viewBox="0 0 100 100" fill="none" aria-hidden="true" focusable="false">
+    <path d="M62 8.5A44 44 0 1 0 90 40" stroke="currentColor" stroke-width="4.5" stroke-linecap="round"></path>
+    <path d="M30 70L42 36L60 64L70 36" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"></path>
+    <path d="M73 36c-6-5 6-9 0-15c-5-5 4-8 7-12" stroke="var(--color-accent)" stroke-width="4.5" stroke-linecap="round"></path>
+  </svg>
+  <span class="logo__text"><span class="logo__name">NOMAD</span><span class="logo__puffs">puffs</span></span>
+</span>

@@ -1,0 +1,42 @@
+{
+  "name": "nomad-puffs-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.12 <25" },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "npm run build:vercel && npm run build:static",
+    "build:vercel": "node scripts/build.mjs --target=vercel",
+    "build:static": "node scripts/build.mjs --target=static",
+    "preview:vercel": "node scripts/serve-static.mjs --dir dist-vercel --port 4321 --base /",
+    "preview:static": "node scripts/serve-static.mjs --dir dist-static --port 4322",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e:install": "playwright install chromium",
+    "test:e2e": "node scripts/build.mjs --target=vercel && node scripts/build.mjs --target=static --base=/loja/ --out=dist-e2e-static && playwright test",
+    "lint": "eslint .",
+    "typecheck": "astro check",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+  },
+  "dependencies": {
+    "@fontsource/lexend": "^5.3.0",
+    "@fontsource/lora": "^5.3.0",
+    "@fontsource/syne": "^5.3.0",
+    "astro": "^7.3.5",
+    "sharp": "^0.35.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@axe-core/playwright": "^4.13.0",
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^24.19.0",
+    "eslint": "^10.11.0",
+    "eslint-plugin-astro": "^3.2.1",
+    "globals": "^17.13.0",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.71.0",
+    "vitest": "^5.0.3"
+  }
+}

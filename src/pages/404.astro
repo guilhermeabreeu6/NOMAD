@@ -1,0 +1,12 @@
+---
+import { withBase } from '../data/url';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Página não encontrada - NOMAD puffs">
+  <main class="page-404">
+    <h1>Página não encontrada</h1>
+    <p><a href={withBase('')}>Voltar para a loja</a></p>
+    <p class="note">Proibida a venda para menores de 18 anos.</p>
+  </main>
+</BaseLayout>

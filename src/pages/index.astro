@@ -1,0 +1,84 @@
+---
+import AgeGate from '../components/AgeGate.astro';
+import CartDialog from '../components/CartDialog.astro';
+import CartFab from '../components/CartFab.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import LegalStrip from '../components/LegalStrip.astro';
+import LiveRegion from '../components/LiveRegion.astro';
+import ModelNav from '../components/ModelNav.astro';
+import NoScriptNotice from '../components/NoScriptNotice.astro';
+import ProductCard from '../components/ProductCard.astro';
+import Watermark from '../components/Watermark.astro';
+import { MODELS, STORE } from '../data/catalog';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { formatBRL } from '../lib/money';
+
+const wa = `https://wa.me/${STORE.whatsappE164}`;
+---
+
+<BaseLayout>
+  <NoScriptNotice />
+  <AgeGate />
+  <div id="app" inert aria-hidden="true">
+    <a class="skip-link" href="#catalogo">Pular para o catálogo</a>
+    <Header />
+    <ModelNav />
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <Watermark />
+        <div class="wrap">
+          <div class="hero__copy">
+            <p class="eyebrow">Catálogo de pods</p>
+            <h1 id="hero-title" tabindex="-1" data-hero-title>NOMAD <span class="serif">puffs</span></h1>
+            <p class="eyebrow">Vapor sem fronteiras</p>
+            <p class="hero__text">
+              Escolha seu pod, monte o pedido e finalize pelo WhatsApp. Entrega em Palmas - TO.
+            </p>
+            <div class="hero__actions">
+              <a class="btn" href="#catalogo">Ver catálogo</a>
+              <a class="btn btn--text" href="#como-funciona">Como funciona</a>
+            </div>
+            <p>Peça pelo WhatsApp <a href={wa} target="_blank" rel="noopener noreferrer">{STORE.whatsappDisplay}</a></p>
+          </div>
+          <div class="hero__side">
+            <ul class="price-list" aria-label="Resumo de preços">
+              {
+                MODELS.map((m) => (
+                  <li>
+                    <a href={`#${m.id}`}>
+                      <span>{m.name}</span>
+                      <strong>{formatBRL(m.priceCents)}</strong>
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+            <ol class="steps" id="como-funciona" aria-label="Como funciona">
+              <li>Escolha o sabor</li>
+              <li>Informe região e pagamento</li>
+              <li>Envie pelo WhatsApp</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section id="catalogo" class="catalog" aria-labelledby="catalogo-title">
+        <div class="wrap">
+          <h2 id="catalogo-title">Catálogo</h2>
+          <div class="grid">
+            {MODELS.map((m, i) => <ProductCard model={m} eager={i === 0} />)}
+          </div>
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </div>
+  <LegalStrip />
+  <CartFab />
+  <CartDialog />
+  <LiveRegion />
+  <script>
+    import '../scripts/main';
+  </script>
+</BaseLayout>

@@ -1,0 +1,129 @@
+---
+import { OTHER_REGION_ID, OTHER_REGION_LABEL, PAYMENT_METHODS, REGIONS } from '../data/catalog';
+import { formatBRL } from '../lib/money';
+---
+
+<dialog id="cart-dialog" class="sheet" aria-labelledby="cart-title" data-cart-dialog>
+  <div class="sheet__grab" aria-hidden="true"></div>
+  <div class="sheet__head">
+    <h2 id="cart-title" tabindex="-1" data-title>Seu carrinho</h2>
+    <button type="button" class="btn btn--secondary" data-action="close-cart" aria-label="Fechar carrinho">Fechar</button>
+  </div>
+
+  <!-- Passo 1: carrinho -->
+  <div class="sheet__body" data-step="cart">
+    <div class="empty" data-empty hidden>
+      <h3>Seu carrinho está vazio</h3>
+      <p>Escolha um modelo e um sabor para começar.</p>
+      <button type="button" class="btn" data-action="see-catalog">Ver catálogo</button>
+    </div>
+    <div data-filled hidden>
+      <ul class="cart-lines" data-lines></ul>
+    </div>
+    <dl class="summary" data-cart-summary hidden>
+      <div><dt>Subtotal</dt><dd data-subtotal>{formatBRL(0)}</dd></div>
+    </dl>
+    <div data-clear-area hidden>
+      <button type="button" class="btn btn--text" data-action="clear-ask">Limpar carrinho</button>
+      <div class="confirm-clear" data-clear-confirm hidden role="group" aria-label="Confirmar limpeza do carrinho">
+        <span>Limpar todos os itens?</span>
+        <button type="button" class="btn btn--secondary" data-action="clear-cancel">Cancelar</button>
+        <button type="button" class="btn btn--secondary btn--danger" data-action="clear-yes">Limpar</button>
+      </div>
+    </div>
+  </div>
+  <div class="sheet__foot" data-step-foot="cart" hidden>
+    <button type="button" class="btn btn--lg" data-action="go-checkout">Continuar</button>
+    <button type="button" class="btn btn--text" data-action="close-cart">Continuar comprando</button>
+    <p class="sheet__legal">Proibida a venda para menores de 18 anos</p>
+  </div>
+
+  <!-- Passo 2: checkout -->
+  <form class="sheet__body" data-step="checkout" novalidate hidden>
+    <div>
+      <button type="button" class="btn btn--text" data-action="back-cart">&larr; Voltar ao carrinho</button>
+    </div>
+    <p class="alert alert--error" data-error-summary role="alert" hidden></p>
+    <div class="field">
+      <p class="eyebrow">Itens</p>
+      <ul class="summary-lines" data-summary-lines></ul>
+    </div>
+    <div class="field">
+      <label for="region">Região de entrega (Palmas - TO)</label>
+      <select id="region" name="region" class="select" data-region aria-describedby="region-help region-error">
+        <option value="">Selecione sua região</option>
+        {REGIONS.map((r) => <option value={r.id}>{`${r.label} - ${formatBRL(r.feeCents)}`}</option>)}
+        <option value={OTHER_REGION_ID}>{OTHER_REGION_LABEL}</option>
+      </select>
+      <p class="field__help" id="region-help">Não achou seu bairro? Escolha "Outra região" e combine com a gente.</p>
+      <p class="fee-chip" data-fee-chip hidden></p>
+      <p class="field-error" id="region-error" data-error="region" hidden>Escolha sua região de entrega</p>
+    </div>
+    <fieldset class="field radio-cards" data-payment aria-describedby="payment-help payment-error">
+      <legend>Forma de pagamento</legend>
+      <p class="field__help" id="payment-help">Pagamento na entrega.</p>
+      {
+        PAYMENT_METHODS.map((p) => (
+          <label class="radio-card">
+            <input type="radio" name="payment" value={p.id} />
+            <span>{p.label}</span>
+            <svg class="flavor__check" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
+              <path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </label>
+        ))
+      }
+      <p class="field-error" id="payment-error" data-error="payment" hidden>Escolha a forma de pagamento</p>
+    </fieldset>
+    <dl class="summary" aria-live="polite" data-order-summary>
+      <div><dt>Subtotal</dt><dd data-o-subtotal></dd></div>
+      <div><dt>Entrega</dt><dd data-o-fee></dd></div>
+      <div class="summary__total"><dt data-o-total-label>Total</dt><dd data-o-total></dd></div>
+    </dl>
+    <p class="note">Pedido sujeito à confirmação de disponibilidade pelo atendimento.</p>
+
+    <section class="sent" data-sent hidden aria-labelledby="sent-title">
+      <h3 id="sent-title" tabindex="-1">Pedido pronto para enviar</h3>
+      <p>Se o WhatsApp não abriu, use uma das opções abaixo. Seu pedido só é confirmado depois da resposta do atendimento.</p>
+      <div class="sent__actions">
+        <a class="btn btn--secondary" data-wa-link href="https://wa.me/" target="_blank" rel="noopener noreferrer">Abrir WhatsApp</a>
+        <button type="button" class="btn btn--secondary" data-action="copy">Copiar mensagem do pedido</button>
+      </div>
+      <p class="note" data-copy-status role="status" hidden></p>
+      <div data-copy-fallback hidden>
+        <p class="note">Não foi possível copiar. Selecione e copie o texto abaixo.</p>
+        <label class="visually-hidden" for="order-text">Mensagem do pedido</label>
+        <textarea id="order-text" readonly data-order-text></textarea>
+      </div>
+      <div class="sent__actions">
+        <button type="button" class="btn btn--text" data-action="clear-after">Limpar carrinho</button>
+        <button type="button" class="btn btn--text" data-action="to-catalog">Voltar ao catálogo</button>
+      </div>
+    </section>
+  </form>
+  <div class="sheet__foot" data-step-foot="checkout" hidden>
+    <button type="button" class="btn btn--lg" data-action="send">
+      <span data-send-label>Enviar pedido pelo WhatsApp</span>
+    </button>
+    <p class="sheet__legal">Você vai abrir o WhatsApp com a mensagem pronta. Não coletamos seus dados neste site.</p>
+  </div>
+
+  <template id="tpl-line">
+    <li class="cart-line" data-line>
+      <div class="cart-line__top">
+        <span class="cart-line__model" data-l-model></span>
+        <span class="cart-line__price" data-l-total></span>
+      </div>
+      <div class="cart-line__flavor"><span class="dots" data-l-dots aria-hidden="true"></span><span data-l-flavor></span></div>
+      <div class="cart-line__unit" data-l-unit></div>
+      <div class="cart-line__bottom">
+        <div class="stepper">
+          <button type="button" data-action="line-dec">&minus;</button>
+          <input type="text" inputmode="numeric" autocomplete="off" data-l-qty />
+          <button type="button" data-action="line-inc">+</button>
+        </div>
+        <button type="button" class="btn btn--text" data-action="line-remove">Remover</button>
+      </div>
+    </li>
+  </template>
+</dialog>

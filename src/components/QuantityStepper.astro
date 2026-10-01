@@ -1,0 +1,21 @@
+---
+interface Props {
+  id: string;
+  label: string;
+}
+const { id, label } = Astro.props;
+---
+
+<div class="stepper" data-stepper>
+  <button type="button" data-action="dec" aria-label={`Diminuir quantidade de ${label}`}>&minus;</button>
+  <input
+    id={id}
+    type="text"
+    inputmode="numeric"
+    autocomplete="off"
+    value="1"
+    data-qty
+    aria-label={`Quantidade de ${label}`}
+  />
+  <button type="button" data-action="inc" aria-label={`Aumentar quantidade de ${label}`}>+</button>
+</div>
