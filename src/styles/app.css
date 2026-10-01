@@ -1230,3 +1230,90 @@
   gap: var(--space-4);
   justify-items: start;
 }
+
+/* ---- Correcao de layout (overflow/colunas) ---- */
+.hero .wrap {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.hero__copy,
+.hero__side,
+.price-list {
+  min-width: 0;
+  width: 100%;
+}
+
+.hero {
+  padding-bottom: calc(var(--space-8) + var(--legal-h));
+}
+
+@media (min-width: 900px) {
+  .hero .wrap {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  }
+}
+
+.grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Imagem do card: ilustrativa, menor; compra acontece no painel de texto */
+.product__media {
+  height: 420px;
+  max-height: 420px;
+  width: auto;
+  max-width: 100%;
+  margin-inline: auto;
+  aspect-ratio: 9 / 16;
+}
+
+.product__media img,
+.product__media picture {
+  width: 100%;
+  height: 100%;
+}
+
+.product__media img {
+  object-fit: contain;
+}
+
+@media (min-width: 640px) {
+  .product {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .product__media {
+    flex: 0 0 236px;
+    margin-inline: 0;
+  }
+
+  .product__panel {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+.product__name {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.qty-row {
+  flex-wrap: wrap;
+}
+
+.stepper {
+  flex: none;
+}
+
+.hero__side {
+  display: grid;
+  gap: var(--space-5);
+}

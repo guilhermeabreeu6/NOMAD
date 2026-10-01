@@ -58,3 +58,9 @@ Origem: seção "## Revisão" do `04-tech-lead.md` e BUG-01 do `06-qa.md`.
 - **S7**: eslint proíbe também `parseFromString`, `createContextualFragment` e `srcdoc`.
 - **S9**: RN1 do `02-po.md` corrigida (5 sabores do V400 do CLAUDE.md).
 - S5 (opcional) e S8 não aplicados.
+
+## Correções de layout (prints reais do coordenador)
+- **Hero mobile**: `--fs-display` fluido (`clamp(36px, (100vw - 48px) / 7.6, 56px)`; 84px no desktop), colunas `minmax(0, ...)`, `min-width:0`/largura 100% em `hero__copy`, `hero__side` e `price-list`; `padding-bottom` do hero inclui a altura da faixa legal. O `body` já reserva a altura da faixa.
+- **Catálogo desktop**: no máximo 2 colunas (>=1200px), 1 coluna abaixo; título do modelo `clamp(30px, 9vw, 40px)` com `overflow-wrap/word-break: normal`; `qty-row` com `flex-wrap`.
+- **Imagem duplicada (decisão)**: o spec 03-design 5.3 manda manter o PNG oficial acima do painel; a imagem repete nome/preço/sabores, mas é ilustrativa (alt sem preço) e o painel de texto é a fonte de verdade. Mantida, porém menor: `height: 420px`, `object-fit: contain`; em >=640px o card vira 2 colunas (imagem 236px | painel). Para remover o PNG da grade, bastaria tirar o bloco `.product__media` do `ProductCard.astro` (decisão do designer/dono).
+- **Regressão**: `tests/e2e/layout.spec.ts` (projeto vercel-desktop; viewports 360, 390 e 1366): nenhum elemento visível com `right > innerWidth` (inclusive dentro de containers com overflow oculto; exclui só marca d'água e chips de rolagem horizontal), sem `scrollWidth > clientWidth` nos blocos principais, títulos dos 4 modelos em 1 linha sem vazar, stepper dentro do painel, e carrinho/checkout abertos dentro da viewport. O teste falhou antes da correção (hero cortado) e passa agora.

@@ -39,8 +39,8 @@
   --font-serif: 'Lora', Georgia, serif;
   --font-ui: 'Lexend', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-  --fs-display: 56px;
-  --fs-model: 44px;
+  --fs-display: clamp(36px, calc((100vw - 48px) / 7.6), 56px);
+  --fs-model: clamp(30px, 9vw, 40px);
   --fs-price: 40px;
   --fs-h2: 28px;
   --fs-body: 16px;
@@ -86,8 +86,8 @@
 
 @media (min-width: 1024px) {
   :root {
-    --fs-display: 96px;
-    --fs-model: 56px;
+    --fs-display: 84px;
+    --fs-model: 40px;
     --fs-price: 48px;
     --fs-h2: 36px;
   }

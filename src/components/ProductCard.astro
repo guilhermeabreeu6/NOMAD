@@ -35,7 +35,7 @@ const image = PRODUCT_IMAGES[model.id];
     <p class="eyebrow">Pod descartável</p>
     <h3 class="product__name" id={`title-${model.id}`}>
       <span class="visually-hidden">{model.name}</span>
-      <span aria-hidden="true">{model.title}</span>
+      <span aria-hidden="true" data-title>{model.title}</span>
       {model.subtitle && <span class="serif" aria-hidden="true">{model.subtitle}</span>}
     </h3>
     <PriceTag cents={model.priceCents} />

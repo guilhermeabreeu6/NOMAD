@@ -25,12 +25,12 @@ export default defineConfig({
     },
   ],
   projects: [
-    { name: 'vercel-mobile', use: { ...devices['Pixel 7'], baseURL: VERCEL_URL } },
-    { name: 'static-mobile', use: { ...devices['Pixel 7'], baseURL: STATIC_URL } },
+    { name: 'vercel-mobile', use: { ...devices['Pixel 7'], baseURL: VERCEL_URL }, testIgnore: ['layout.spec.ts'] },
+    { name: 'static-mobile', use: { ...devices['Pixel 7'], baseURL: STATIC_URL }, testIgnore: ['layout.spec.ts'] },
     {
       name: 'vercel-desktop',
       use: { ...devices['Desktop Chrome'], baseURL: VERCEL_URL },
-      testMatch: ['a11y.spec.ts', 'catalog.spec.ts'],
+      testMatch: ['a11y.spec.ts', 'catalog.spec.ts', 'layout.spec.ts'],
     },
   ],
 });
