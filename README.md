@@ -18,7 +18,7 @@ quantidade, informa a região de entrega e a forma de pagamento, e o pedido sai 
 ## Links rápidos
 | | Link |
 |---|---|
-| 🌐 **Site (produção, Cloudflare Pages, branch `main`)** | **https://nomadpuffs.com.br** |
+| 🌐 **Site (produção, Cloudflare Worker `nomad`, branch `main`)** | **https://nomadpuffs.com.br** |
 | 👀 Visualização na Vercel (não comercial, noindex) | https://nomad-v1-nine.vercel.app |
 | 💬 Pedidos pelo WhatsApp | https://wa.me/5563981239498 |
 | 📊 Planilha de controle | [`planilha/NOMAD-puffs-controle.xlsx`](planilha/NOMAD-puffs-controle.xlsx) |
@@ -138,13 +138,13 @@ npm run dev                 # http://localhost:4321
 | `npm run check` | Lint + tipos + testes + build (o mesmo que o CI) |
 
 ## Duas versões de deploy
-O **mesmo código** gera três saídas. A produção em **nomadpuffs.com.br** é a da Cloudflare Pages
+O **mesmo código** gera três saídas. A produção em **nomadpuffs.com.br** é a da Cloudflare (Worker `nomad`, `wrangler.jsonc`)
 (plano gratuito, uso comercial permitido); a Vercel fica só para visualização.
 
-### 0. Cloudflare Pages — produção
+### 0. Cloudflare (Worker `nomad`) — produção
 - Build: `npm run build:cloudflare` → `dist-cloudflare/` (gera `_headers` com CSP, segurança e cache, a partir de
   [`deploy/cloudflare/headers.template`](deploy/cloudflare/headers.template); não gera `.htaccess`).
-- **`noindex` por padrão**; só libera os buscadores com `NOINDEX=false` explícito. Previews `*.pages.dev` são
+- **`noindex` por padrão**; só libera os buscadores com `NOINDEX=false` explícito. Endereços `*.workers.dev` são
   sempre `noindex`.
 - Guia passo a passo (conectar o repositório, variáveis, domínio e DNS no Registro.br):
   [`docs/deploy-cloudflare.md`](docs/deploy-cloudflare.md).

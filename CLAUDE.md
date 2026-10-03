@@ -17,7 +17,7 @@ Slogan: "VAPOR SEM FRONTEIRAS". Proibida a venda para menores de 18 anos.
 - lint:     `npm run lint` · `npm run typecheck` · tudo junto: `npm run check`
 
 ## Versões de deploy (mesmo código-fonte)
-0. **Cloudflare Pages — PRODUÇÃO em nomadpuffs.com.br** (plano gratuito, uso comercial permitido).
+0. **Cloudflare (Worker `nomad`, `wrangler.jsonc` serve `dist-cloudflare/`) — PRODUÇÃO em nomadpuffs.com.br** (plano gratuito, uso comercial permitido).
    `npm run build:cloudflare` → `dist-cloudflare/` + `_headers` (de `deploy/cloudflare/headers.template`).
    noindex por padrão (só `NOINDEX=false` libera); guia em `docs/deploy-cloudflare.md`.
 1. **Vercel** — só visualização (`nomad-v1-nine.vercel.app`, `vercel.json`); Hobby não permite uso comercial.

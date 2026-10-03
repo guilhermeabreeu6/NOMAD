@@ -2,6 +2,13 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versionamento: [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.2.2] - 2026-10-03
+### Corrigido
+- Produção na Cloudflare foi criada como Worker (não Pages) e a autoconfiguração publicava um `astro build` genérico,
+  sem `_headers` (CSP e cabeçalhos de segurança) e sem o `robots.txt` do projeto. Novo `wrangler.jsonc` (Worker `nomad`)
+  serve `dist-cloudflare/` com a 404 do site; regras de noindex trocadas de `*.pages.dev` para `*.workers.dev`.
+- `docs/deploy-cloudflare.md` reescrito para Workers Builds (comando de build, deploy e variáveis).
+
 ## [0.2.1] - 2026-10-03
 ### Adicionado
 - Alvo de build `cloudflare` (`npm run build:cloudflare` → `dist-cloudflare/`) para produção na Cloudflare Pages em

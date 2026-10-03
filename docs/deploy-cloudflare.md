@@ -1,58 +1,52 @@
-# Deploy na Cloudflare Pages (produção em nomadpuffs.com.br)
+# Deploy na Cloudflare (produção em nomadpuffs.com.br)
 
-Plano gratuito da Cloudflare (uso comercial permitido). Cada merge na `main` publica o site sozinho;
-cada PR ganha um preview em `*.pages.dev` (sempre `noindex`).
+Worker **`nomad`** (Cloudflare Workers, plano gratuito, uso comercial permitido) servindo só arquivos estáticos.
+Configuração versionada em [`wrangler.jsonc`](../wrangler.jsonc): serve `dist-cloudflare/`, com a 404 do site.
+Cada merge na `main` publica sozinho (Workers Builds).
 
-## 1. Criar o projeto (uma vez)
-1. Crie a conta em https://dash.cloudflare.com (plano **Free**).
-2. **Workers & Pages → Create → Pages → Import an existing Git repository** (Connect to Git).
-3. Autorize o GitHub **somente** no repositório `guilhermeabreeu6/NOMAD` e selecione-o.
-4. Configuração do build:
+> Sem o `wrangler.jsonc`, a Cloudflare autoconfigura um `astro build` genérico: o site abre, mas **sem** os
+> cabeçalhos de segurança (`_headers`) e sem o nosso `robots.txt`. Não apague esse arquivo.
+
+## 1. Configuração do build (uma vez)
+No painel: **Workers e Pages → nomad → Configurações → Build** (Settings → Build):
 
 | Campo | Valor |
 |---|---|
-| Production branch | `main` |
-| Framework preset | `None` |
-| Build command | `npm run build:cloudflare` |
-| Build output directory | `dist-cloudflare` |
-| Root directory | (vazio) |
+| Repositório / branch de produção | `guilhermeabreeu6/NOMAD` / `main` |
+| Comando de build | `npm run build:cloudflare` |
+| Comando de implantação | `npx wrangler deploy` |
+| Diretório raiz | `/` (vazio) |
 
-5. **Environment variables** (Production e Preview):
+**Variáveis de build** (na mesma tela, *Build variables*; texto simples, nenhuma é segredo):
 
 | Variável | Valor | Observação |
 |---|---|---|
 | `NODE_VERSION` | `24` | o projeto exige Node >= 22.12 |
-| `SITE_URL` | `https://nomadpuffs.com.br` | só em **Production**: canonical e Open Graph |
+| `SITE_URL` | `https://nomadpuffs.com.br` | canonical e Open Graph |
 | `NOINDEX` | `true` | fora do Google até decisão do dono (só `false` libera) |
 
-Nenhuma variável é segredo.
-
-6. **Save and Deploy**. Confira o endereço `https://<projeto>.pages.dev`.
+Depois de salvar: **Implantações → Nova implantação / Retry** (ou faça qualquer merge na `main`).
 
 ## 2. Domínio próprio
-O domínio raiz (`nomadpuffs.com.br`) só funciona no Pages se o DNS do domínio estiver na Cloudflare.
+1. **Domínios → Adicionar** `nomadpuffs.com.br` (plano Free). A Cloudflare mostra **2 servidores DNS**
+   (`xxx.ns.cloudflare.com`) na **Visão geral** do domínio.
+2. No https://registro.br: **nomadpuffs.com.br → DNS → Alterar servidores DNS** → cole os 2 e salve.
+   Propagação: de minutos a algumas horas (a Cloudflare avisa por e-mail).
+3. No Worker **nomad → Domínios → Adicionar domínio personalizado**: `nomadpuffs.com.br` e `www.nomadpuffs.com.br`.
+   A Cloudflare cria o DNS e o HTTPS sozinha (não crie registros A/CNAME à mão).
+4. Redirecionar `www` → raiz: **Regras → Regras de redirecionamento → modelo "Redirect from WWW to root"** (301).
+5. **SSL/TLS → Certificados de borda**: ligue **Sempre usar HTTPS**.
+6. Os registros MX/SPF/DMARC que já existem no DNS bloqueiam e-mail falso em nome do domínio: manter.
 
-1. No painel: **Add a domain** → `nomadpuffs.com.br` → plano **Free**. A Cloudflare mostra **2 servidores DNS**
-   (algo como `xxx.ns.cloudflare.com`).
-2. No https://registro.br: **nomadpuffs.com.br → DNS → Alterar servidores DNS**, troque pelos 2 da Cloudflare e salve.
-   A troca pode levar de minutos a algumas horas; a Cloudflare avisa por e-mail quando o domínio ficar ativo.
-3. No projeto Pages: **Custom domains → Set up a custom domain** → `nomadpuffs.com.br`, e depois `www.nomadpuffs.com.br`.
-   A Cloudflare cria os registros DNS e o certificado HTTPS sozinha.
-4. Redirecionar `www` → raiz: **Rules → Redirect Rules → Create rule → modelo "Redirect from WWW to root"** (301).
-5. **SSL/TLS → Edge Certificates**: ligue **Always Use HTTPS**.
-
-## 3. Verificação (o coordenador/DevOps faz)
-- `https://nomadpuffs.com.br/`, `/outubro/` → 200; `/qualquer-coisa` → 404 personalizada.
+## 3. Verificação (coordenador/DevOps)
+- `/`, `/outubro/` → 200; `/outubro` → redireciona para `/outubro/`; `/qualquer-coisa` → 404 personalizada.
 - Cabeçalhos: CSP, `X-Frame-Options: DENY`, `Strict-Transport-Security`, `X-Robots-Tag: noindex, nofollow`
-  (enquanto `NOINDEX=true`); `/_astro/*` com `Cache-Control: ... immutable`.
-- `http://` e `www.` redirecionam para `https://nomadpuffs.com.br/`.
-- Gate 18+, carrinho, mensagem do WhatsApp e `robots.txt`.
+  (enquanto `NOINDEX=true`); `/_astro/*` com `Cache-Control: ... immutable`; `/_headers` → 404 (não é publicado).
+- `robots.txt` com `Disallow: /` enquanto `NOINDEX=true`.
+- `*.workers.dev` sempre `noindex`.
 
 ## 4. Liberar o Google (quando o dono decidir)
-Troque `NOINDEX` para `false` em Production e faça um novo deploy (**Deployments → Retry deployment**).
+Troque `NOINDEX` para `false` nas variáveis de build e reimplante.
 
-## Observações
-- Os cabeçalhos vêm de `_headers`, gerado de `deploy/cloudflare/headers.template` (teste unitário garante a mesma
-  CSP e os mesmos cabeçalhos de `src/data/csp.ts`, `vercel.json` e do `.htaccess`).
-- A Vercel (`nomad-v1-nine.vercel.app`) continua recebendo os deploys, só para visualização; o plano Hobby não
-  permite uso comercial.
+## Teste local
+`npm run build:cloudflare && npx wrangler dev` → http://localhost:8787 (aplica `_headers` como em produção).

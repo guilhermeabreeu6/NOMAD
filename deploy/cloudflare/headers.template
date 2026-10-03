@@ -1,4 +1,4 @@
-# NOMAD puffs - Cloudflare Pages (_headers). Gerado por scripts/build.mjs --target=cloudflare.
+# NOMAD puffs - Cloudflare Workers static assets (_headers). Gerado por scripts/build.mjs --target=cloudflare.
 # Regras que casam com a mesma URL se SOMAM; por isso Cache-Control só aparece em /_astro/*
 # (HTML usa o padrão do Pages: sempre revalidado).
 /*
@@ -10,8 +10,11 @@
   Cross-Origin-Opener-Policy: same-origin
   Strict-Transport-Security: max-age=31536000
 {{NOINDEX_BLOCK}}
-# Previews (*.pages.dev) nunca são indexados, independentemente de NOINDEX.
-https://:project.pages.dev/*
+# Endereços técnicos (*.workers.dev, previews) nunca são indexados, independentemente de NOINDEX.
+https://:subdomain.workers.dev/*
+  X-Robots-Tag: noindex, nofollow
+
+https://:version.:subdomain.workers.dev/*
   X-Robots-Tag: noindex, nofollow
 
 /_astro/*

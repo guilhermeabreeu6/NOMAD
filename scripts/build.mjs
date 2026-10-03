@@ -49,7 +49,7 @@ async function main() {
       siteUrl = `https://${env['VERCEL_PROJECT_PRODUCTION_URL']}`;
     }
   } else if (target === 'cloudflare') {
-    // Cloudflare Pages: raiz do domínio; noindex até NOINDEX=false explícito (decisão do dono pendente).
+    // Cloudflare (Worker "nomad", wrangler.jsonc): raiz do domínio; noindex até NOINDEX=false explícito (decisão do dono pendente).
     outDir = arg('out') ?? 'dist-cloudflare';
     base = '/';
     noindex = env['NOINDEX'] !== 'false';
