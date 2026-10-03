@@ -2,6 +2,10 @@ import { REGIONS } from '../../src/data/catalog';
 import { formatBRL } from '../../src/lib/money';
 import { addToCart, decodeWaText, expect, openCart, test, WA_PHONE } from './fixtures';
 import type { Page } from '@playwright/test';
+import { SEM_PROMO } from '../instants';
+
+// Taxas da tabela: relógio fixo fora da promoção de frete (a promoção tem spec própria: promo.spec.ts).
+test.use({ now: SEM_PROMO });
 
 async function toCheckout(page: Page): Promise<ReturnType<Page['locator']>> {
   const dialog = await openCart(page);

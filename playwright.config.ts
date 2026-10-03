@@ -30,7 +30,7 @@ export default defineConfig({
     {
       name: 'vercel-desktop',
       use: { ...devices['Desktop Chrome'], baseURL: VERCEL_URL },
-      testMatch: ['a11y.spec.ts', 'catalog.spec.ts', 'layout.spec.ts'],
+      testMatch: ['a11y.spec.ts', 'catalog.spec.ts', 'layout.spec.ts', 'promo-page.spec.ts'],
     },
   ],
 });

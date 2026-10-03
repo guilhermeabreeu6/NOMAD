@@ -9,6 +9,7 @@ import { formatBRL } from '../../src/lib/money';
 import { computeTotals, parseRegionChoice, validateCheckout } from '../../src/lib/order';
 import { CART_KEY, loadCart, type KeyValueStore } from '../../src/lib/storage';
 import { buildOrderMessage, buildWhatsAppUrl, sanitizeText } from '../../src/lib/whatsapp';
+import { SEM_PROMO } from '../instants';
 
 const claude = readFileSync(new URL('../../CLAUDE.md', import.meta.url), 'utf8');
 const rows = (header: RegExp): string[][] => {
@@ -154,12 +155,12 @@ describe('preços: o carrinho usa sempre o catálogo atual', () => {
     const cart: Cart = MODELS.flatMap((m) => m.flavors.map((f) => ({ modelId: m.id, flavorId: f.id, qty: 10 })));
     const lines = resolveCart(cart);
     expect(subtotalCents(lines)).toBe(22050 * 100);
-    const t = computeTotals(subtotalCents(lines), parseRegionChoice('taquaralto-lago-sul'));
+    const t = computeTotals(subtotalCents(lines), parseRegionChoice('taquaralto-lago-sul'), SEM_PROMO);
     expect(formatBRL(t.totalCents)).toBe('R$ 22.085,00');
   });
   it('"outra" e região nula não somam taxa', () => {
-    expect(computeTotals(11000, parseRegionChoice('outra'))).toEqual({ subtotalCents: 11000, feeCents: null, totalCents: 11000, feeToArrange: true });
-    expect(computeTotals(11000, null)).toMatchObject({ feeCents: null, feeToArrange: false });
+    expect(computeTotals(11000, parseRegionChoice('outra'), SEM_PROMO)).toMatchObject({ subtotalCents: 11000, feeCents: null, totalCents: 11000, feeToArrange: true });
+    expect(computeTotals(11000, null, SEM_PROMO)).toMatchObject({ feeCents: null, feeToArrange: false });
   });
 });
 
@@ -181,7 +182,7 @@ describe('mensagem/URL do WhatsApp com texto hostil', () => {
   for (const p of payloads) {
     it(`URL mantém um único parâmetro text e ida-e-volta íntegra: ${JSON.stringify(p).slice(0, 40)}`, () => {
       if (!region || !pix) throw new Error('fixture');
-      const msg = buildOrderMessage({ lines: [line({ flavorName: p })], region, payment: pix });
+      const msg = buildOrderMessage({ lines: [line({ flavorName: p })], region, payment: pix, nowMs: SEM_PROMO });
       const url = buildWhatsAppUrl(msg);
       const u = new URL(url);
       expect(u.host).toBe('wa.me');

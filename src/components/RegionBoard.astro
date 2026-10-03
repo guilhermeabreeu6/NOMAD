@@ -1,0 +1,126 @@
+---
+// Quadro de regiões da promoção de frete (design 4.3). Gerado dos dados: nunca texto digitado à mão.
+// Estados por CSS (html[data-promo]): "ativa"/"breve" mostram os três blocos; "encerrada" mostra a tabela normal.
+import { ARRANGE_AREAS, REGIONS, STORE } from '../data/catalog';
+import { REGION_NEIGHBORHOODS, type DeliveryPromo } from '../data/promos';
+import { formatBRL } from '../lib/money';
+
+interface Props {
+  promo: DeliveryPromo;
+}
+const { promo } = Astro.props;
+
+const free = REGIONS.filter((r) => promo.eligibleRegionIds.includes(r.id));
+const excluded = REGIONS.filter((r) => promo.excludedRegionIds.includes(r.id)).flatMap((r) =>
+  (REGION_NEIGHBORHOODS[r.id] ?? [r.label]).map((name) => ({ name, feeCents: r.feeCents })),
+);
+const wa = `https://wa.me/${STORE.whatsappE164}`;
+---
+
+<div class="region-board" data-promo-only="ativa breve">
+  <section class="region-card region-card--free" aria-labelledby="rb-free">
+    <p class="tag tag--accent">
+      <span data-promo-only="ativa">Grátis em outubro</span><span data-promo-only="breve">A partir de 01/10</span>
+    </p>
+    <h3 id="rb-free">Frete grátis</h3>
+    <ul class="region-list" data-region-free>
+      {
+        free.map((r) => (
+          <li class="region-row">
+            <span class="region-row__name">
+              <svg class="region-row__icon region-row__icon--check" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
+                <path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              {r.label}
+            </span>
+            <span class="region-row__fee">
+              <span class="visually-hidden">Taxa normal </span>
+              <s class="fee-old">{formatBRL(r.feeCents)}</s>
+              <span class="visually-hidden">, em outubro </span>
+              <span class="fee-new">Grátis</span>
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="region-card" aria-labelledby="rb-normal">
+    <p class="tag">Fora da promoção</p>
+    <h3 id="rb-normal">Taxa normal de entrega</h3>
+    <ul class="region-list" data-region-excluded>
+      {
+        excluded.map((r) => (
+          <li class="region-row">
+            <span class="region-row__name">
+              <span class="region-row__icon region-row__icon--dash" aria-hidden="true" />
+              {r.name}
+            </span>
+            <span class="region-row__fee region-row__fee--normal">{formatBRL(r.feeCents)}</span>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="note">No carrinho, Bertaville e Aurenys aparecem juntos, assim como Taquaralto e Lago Sul.</p>
+  </section>
+
+  <section class="region-card" aria-labelledby="rb-arrange">
+    <p class="tag">Fora da promoção</p>
+    <h3 id="rb-arrange">Taxa a combinar</h3>
+    <ul class="region-list" data-region-arrange>
+      {
+        ARRANGE_AREAS.map((a) => (
+          <li class="region-row">
+            <span class="region-row__name">
+              <span class="region-row__icon region-row__icon--dash" aria-hidden="true" />
+              {a.label}
+            </span>
+            <span class="region-row__fee region-row__fee--muted">a combinar</span>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="note">Para esses bairros, a taxa é combinada no WhatsApp. No carrinho, escolha o seu bairro na lista.</p>
+  </section>
+</div>
+
+<div class="region-board region-board--single" data-promo-only="encerrada">
+  <section class="region-card" aria-labelledby="rb-all">
+    <h3 id="rb-all">Taxas por região</h3>
+    <ul class="region-list">
+      {
+        REGIONS.map((r) => (
+          <li class="region-row">
+            <span class="region-row__name">{r.label}</span>
+            <span class="region-row__fee region-row__fee--normal">{formatBRL(r.feeCents)}</span>
+          </li>
+        ))
+      }
+      {
+        ARRANGE_AREAS.map((a) => (
+          <li class="region-row">
+            <span class="region-row__name">{a.label}</span>
+            <span class="region-row__fee region-row__fee--muted">a combinar</span>
+          </li>
+        ))
+      }
+      <li class="region-row">
+        <span class="region-row__name">Outra região</span>
+        <span class="region-row__fee region-row__fee--muted">a combinar</span>
+      </li>
+    </ul>
+  </section>
+</div>
+
+<p class="region-help">
+  <svg class="region-help__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
+    <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.6" />
+    <path d="M7.8 7.6a2.3 2.3 0 0 1 4.4.9c0 1.5-2.2 1.8-2.2 3.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+    <circle cx="10" cy="14.4" r="0.9" fill="currentColor" />
+  </svg>
+  <span>
+    Não achou seu bairro? Fale com a gente no WhatsApp
+    <a class="inline-link" href={wa} target="_blank" rel="noopener noreferrer">{STORE.whatsappDisplay}<span class="visually-hidden"> (abre o WhatsApp)</span></a>
+    antes de pedir.
+  </span>
+</p>

@@ -1,12 +1,14 @@
 import { STORE, type PaymentMethod } from '../data/catalog';
 import { subtotalCents, type ResolvedLine } from './cart';
 import { formatBRL } from './money';
-import { computeTotals, type RegionChoice } from './order';
+import { computeTotals, type DeliveryQuote, type RegionChoice } from './order';
 
 export interface OrderInput {
   lines: readonly ResolvedLine[];
   region: Exclude<RegionChoice, null>;
   payment: PaymentMethod;
+  /** Instante do envio (epoch ms): decide se a promoção de frete vale. */
+  nowMs: number;
 }
 
 // Faixas removidas (por codigo, sem depender de caracteres invisiveis no fonte):
@@ -33,17 +35,28 @@ export function sanitizeText(s: string): string {
   return out.replace(/\s+/g, ' ').trim();
 }
 
+function deliveryLine(quote: DeliveryQuote): string {
+  switch (quote.kind) {
+    case 'free':
+      return `Entrega: ${sanitizeText(quote.region.label)} - ${sanitizeText(quote.promo.label)}`;
+    case 'fixed':
+      // Região fora da promoção: só a taxa, sem mencionar a promoção.
+      return `Entrega: ${sanitizeText(quote.region.label)} - ${formatBRL(quote.feeCents)}`;
+    case 'arrange':
+      return quote.area ? `Entrega: ${sanitizeText(quote.area.label)} (taxa a combinar)` : 'Entrega: Outra região (a combinar)';
+    case 'unselected':
+      return 'Entrega: a combinar';
+  }
+}
+
 export function buildOrderMessage(input: OrderInput): string {
   const subtotal = subtotalCents(input.lines);
-  const totals = computeTotals(subtotal, input.region);
+  const totals = computeTotals(subtotal, input.region, input.nowMs);
   const items = input.lines.map(
     (l) =>
       `- ${l.qty}x ${sanitizeText(l.modelName)} - ${sanitizeText(l.flavorName)} - ${formatBRL(l.lineCents)}`,
   );
-  const delivery =
-    input.region.kind === 'region' && totals.feeCents !== null
-      ? `Entrega: ${sanitizeText(input.region.region.label)} - ${formatBRL(totals.feeCents)}`
-      : 'Entrega: Outra região (a combinar)';
+  const delivery = deliveryLine(totals.quote);
   const total = totals.feeToArrange
     ? `Total: ${formatBRL(subtotal)} + entrega a combinar`
     : `Total: ${formatBRL(totals.totalCents)}`;

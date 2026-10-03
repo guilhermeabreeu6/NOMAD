@@ -1,0 +1,231 @@
+---
+// Landing da promoção de frete grátis de outubro (design 03-design.md, seções 3 e 4).
+// Os três estados (breve/ativa/encerrada) ficam no HTML e alternam por CSS via html[data-promo].
+// Página sem carrinho: o pedido é montado no catálogo da home.
+import AgeGate from '../components/AgeGate.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import LegalStrip from '../components/LegalStrip.astro';
+import NoScriptNotice from '../components/NoScriptNotice.astro';
+import RegionBoard from '../components/RegionBoard.astro';
+import Watermark from '../components/Watermark.astro';
+import { MODELS, REGIONS, STORE } from '../data/catalog';
+import { FRETE_OUTUBRO } from '../data/promos';
+import { withBase } from '../data/url';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { formatBRL } from '../lib/money';
+
+const promo = FRETE_OUTUBRO;
+const home = withBase('');
+const catalogHref = `${home}#catalogo`;
+const wa = `https://wa.me/${STORE.whatsappE164}`;
+const free = REGIONS.filter((r) => promo.eligibleRegionIds.includes(r.id));
+const minFree = Math.min(...free.map((r) => r.feeCents));
+---
+
+<BaseLayout
+  title="Frete grátis em outubro - NOMAD puffs"
+  description="Em outubro de 2026 o frete é grátis na maior parte de Palmas - TO. Veja as regiões participantes, escolha seu pod e finalize o pedido pelo WhatsApp. Venda proibida para menores de 18 anos."
+>
+  <NoScriptNotice />
+  <AgeGate />
+  <div id="app" class="promo-page" inert aria-hidden="true">
+    <a class="skip-link" href="#regioes">Pular para as regiões</a>
+    <Header variant="promo" />
+    <main id="main">
+      <!-- S2 - Hero -->
+      <section class="hero promo-hero" aria-labelledby="hero-title">
+        <Watermark />
+        <div class="wrap">
+          <div class="hero__copy">
+            <p class="eyebrow promo-hero__eyebrow">
+              <span data-promo-only="ativa">Promoção de outubro · Palmas - TO</span>
+              <span data-promo-only="breve">Em breve · Palmas - TO</span>
+              <span data-promo-only="encerrada">Promoção encerrada</span>
+            </p>
+            <h1 id="hero-title" tabindex="-1" data-hero-title>
+              <span data-promo-only="ativa breve">Frete <span class="serif">grátis</span></span>
+              <span data-promo-only="encerrada">Valeu, <span class="serif">outubro</span></span>
+            </h1>
+            <p class="period-badge" data-promo-only="ativa">
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+                <rect x="2" y="3" width="12" height="11" rx="2" stroke="currentColor" stroke-width="1.5"></rect>
+                <path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+              </svg>
+              01/10 a 31/10<span class="visually-hidden"> de 2026</span>
+            </p>
+            <p class="period-badge" data-promo-only="breve">Começa em 01/10<span class="visually-hidden"> de 2026</span></p>
+            <p class="period-badge period-badge--off" data-promo-only="encerrada">Encerrada em 31/10/2026</p>
+
+            <p class="hero__text promo-hero__text" data-promo-only="ativa">
+              Em outubro a entrega é por nossa conta na maior parte de Palmas. Escolha seu pod, monte o pedido e finalize
+              pelo WhatsApp.
+            </p>
+            <p class="hero__text promo-hero__text" data-promo-only="breve">
+              De 01 a 31 de outubro a entrega será por nossa conta na maior parte de Palmas.
+            </p>
+            <p class="hero__text promo-hero__text" data-promo-only="encerrada">
+              O frete grátis de outubro terminou. Obrigado por pedir com a gente! A partir de agora valem as taxas
+              normais de entrega em Palmas - TO.
+            </p>
+
+            <p class="promo-countdown" data-countdown hidden>
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+                <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"></circle>
+                <path d="M8 4.5V8l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+              </svg>
+              <span data-countdown-text></span>
+            </p>
+
+            <div class="hero__actions promo-hero__actions">
+              <a class="btn btn--lg" href={catalogHref} data-promo-only="ativa">Montar meu pedido</a>
+              <a class="btn btn--lg" href={catalogHref} data-promo-only="breve encerrada">Ver catálogo</a>
+              <a class="btn btn--secondary" href="#regioes" data-promo-only="ativa breve">Ver onde vale</a>
+              <a class="btn btn--secondary" href="#regioes" data-promo-only="encerrada">Ver taxas de entrega</a>
+            </div>
+            <p class="promo-note" data-promo-only="ativa breve">
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false">
+                <path d="M8 14.5s-4.5-4.4-4.5-7.7a4.5 4.5 0 0 1 9 0c0 3.3-4.5 7.7-4.5 7.7z" stroke="currentColor" stroke-width="1.5"></path>
+                <circle cx="8" cy="6.8" r="1.5" fill="currentColor"></circle>
+              </svg>
+              <span>
+                Fora da promoção: Taquaralto, Bertaville, Taquari, Aurenys, Lago Sul, Lago Norte, Araras, Caribe e
+                Polinésia.
+              </span>
+            </p>
+          </div>
+
+          <aside class="promo-summary" aria-label="Resumo da promoção" data-promo-only="ativa breve">
+            <p class="eyebrow">Entrega em Palmas</p>
+            <p class="promo-summary__price">
+              <s class="promo-summary__old" aria-hidden="true">{`R$ ${String(minFree / 100)}`}</s>
+              <span class="visually-hidden">Taxa a partir de {formatBRL(minFree)}, em outubro </span>
+              <span class="promo-summary__new">R$ 0</span>
+            </p>
+            <p class="note">nas quadras centrais e Santo Amaro</p>
+            <ul class="promo-summary__list">
+              <li><span>Quadras 700 Sul a 200 Norte/Sul</span><strong>Grátis</strong></li>
+              <li><span>Quadras 300 a 1200</span><strong>Grátis</strong></li>
+              <li><span>Quadras 1300 a 1500 Sul e Santo Amaro</span><strong>Grátis</strong></li>
+            </ul>
+            <a class="inline-link" href="#regioes">Ver lista completa</a>
+          </aside>
+        </div>
+      </section>
+
+      <!-- S3 - Onde vale -->
+      <section id="regioes" class="promo-section" aria-labelledby="regioes-title">
+        <div class="wrap">
+          <header class="section-head">
+            <p class="eyebrow">Regiões de entrega</p>
+            <h2 id="regioes-title">
+              <span data-promo-only="ativa breve">Onde o frete é grátis</span>
+              <span data-promo-only="encerrada">Taxas de entrega em Palmas</span>
+            </h2>
+            <p class="section-head__text" data-promo-only="ativa breve">
+              Confira seu bairro. Ao finalizar o pedido, escolha a mesma região no carrinho.
+            </p>
+            <p class="section-head__text" data-promo-only="encerrada">
+              Valores atuais por região. Para outros bairros, combine no WhatsApp.
+            </p>
+          </header>
+          <RegionBoard promo={promo} />
+        </div>
+      </section>
+
+      <!-- S4 - Como funciona -->
+      <section class="promo-section" aria-labelledby="como-title" data-promo-only="ativa breve">
+        <div class="wrap">
+          <header class="section-head">
+            <p class="eyebrow">Como funciona</p>
+            <h2 id="como-title">Do catálogo ao WhatsApp</h2>
+          </header>
+          <ol class="steps steps--lg">
+            <li>Escolha o pod e o sabor no catálogo.</li>
+            <li>No carrinho, selecione sua região. Se ela participa, a entrega aparece como grátis.</li>
+            <li>Envie o pedido pelo WhatsApp e pague na entrega: PIX, débito ou crédito.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- S5 - Escolha seu pod -->
+      <section class="promo-section" aria-labelledby="pods-title">
+        <div class="wrap">
+          <header class="section-head">
+            <p class="eyebrow">Catálogo de pods</p>
+            <h2 id="pods-title">Escolha seu pod</h2>
+          </header>
+          <ul class="price-list price-list--capa">
+            {
+              MODELS.map((m) => (
+                <li>
+                  <a href={`${home}#${m.id}`}>
+                    <span>{m.name}</span>
+                    <strong>
+                      {formatBRL(m.priceCents)}
+                      <span class="price-list__arrow" aria-hidden="true">
+                        &rarr;
+                      </span>
+                    </strong>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </section>
+
+      <!-- S6 - Regras -->
+      <section class="promo-section" aria-labelledby="regras-title" data-promo-only="ativa breve">
+        <div class="wrap">
+          <div class="fine-print">
+            <p class="eyebrow">Regras</p>
+            <h2 id="regras-title">Regras da promoção</h2>
+            <ul>
+              <li>Válida para pedidos enviados pelo WhatsApp de 01/10/2026 a 31/10/2026, até 23h59 (horário de Palmas).</li>
+              <li>Frete grátis só para entregas em Palmas - TO, nas regiões listadas em "Frete grátis".</li>
+              <li>
+                Não participam: Taquaralto, Bertaville, Taquari, Aurenys, Lago Sul e Lago Norte (taxa normal) e Araras,
+                Caribe e Polinésia (taxa a combinar no WhatsApp).
+              </li>
+              <li>Bairros não listados: taxa a combinar no WhatsApp.</li>
+              <li>Sem valor mínimo de pedido.</li>
+              <li>Pedido sujeito a confirmação de disponibilidade pelo atendimento.</li>
+              <li>Proibida a venda para menores de 18 anos. A idade pode ser conferida no ato da entrega.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- S7 - CTA final -->
+      <section class="cta-band" aria-labelledby="cta-title">
+        <Watermark />
+        <div class="wrap">
+          <p class="eyebrow">Vapor sem fronteiras</p>
+          <h2 id="cta-title">
+            <span data-promo-only="ativa">Aproveite enquanto é outubro</span>
+            <span data-promo-only="breve">Já pode escolher seu pod</span>
+            <span data-promo-only="encerrada">Seu próximo pod está no catálogo</span>
+          </h2>
+          <p class="cta-band__text" data-promo-only="ativa breve">
+            Monte seu pedido no catálogo e finalize pelo WhatsApp. A confirmação do frete é feita pelo atendimento.
+          </p>
+          <p class="cta-band__text" data-promo-only="encerrada">
+            Fique de olho no nosso Instagram e WhatsApp para as próximas promoções.
+          </p>
+          <a class="btn btn--lg cta-band__btn" href={catalogHref} data-promo-only="ativa">Montar meu pedido</a>
+          <a class="btn btn--lg cta-band__btn" href={catalogHref} data-promo-only="breve encerrada">Ver catálogo</a>
+          <p class="cta-band__wa">
+            Prefere conversar? Chame no WhatsApp
+            <a class="inline-link" href={wa} target="_blank" rel="noopener noreferrer">{STORE.whatsappDisplay}<span class="visually-hidden"> (abre o WhatsApp)</span></a>
+          </p>
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </div>
+  <LegalStrip />
+  <script>
+    import '../scripts/promo-page';
+  </script>
+</BaseLayout>

@@ -1,5 +1,5 @@
 ---
-import { OTHER_REGION_ID, OTHER_REGION_LABEL, PAYMENT_METHODS, REGIONS } from '../data/catalog';
+import { ARRANGE_AREAS, OTHER_REGION_ID, OTHER_REGION_LABEL, PAYMENT_METHODS, REGIONS } from '../data/catalog';
 import { formatBRL } from '../lib/money';
 ---
 
@@ -52,7 +52,13 @@ import { formatBRL } from '../lib/money';
       <label for="region">Região de entrega (Palmas - TO)</label>
       <select id="region" name="region" class="select" data-region aria-describedby="region-help">
         <option value="">Selecione sua região</option>
-        {REGIONS.map((r) => <option value={r.id}>{`${r.label} - ${formatBRL(r.feeCents)}`}</option>)}
+        {
+          REGIONS.map((r) => {
+            const base = `${r.label} - ${formatBRL(r.feeCents)}`;
+            return <option value={r.id} data-label-base={base}>{base}</option>;
+          })
+        }
+        {ARRANGE_AREAS.map((a) => <option value={a.id}>{`${a.label} - taxa a combinar`}</option>)}
         <option value={OTHER_REGION_ID}>{OTHER_REGION_LABEL}</option>
       </select>
       <p class="field__help" id="region-help">Não achou seu bairro? Escolha "Outra região" e combine com a gente.</p>
@@ -75,6 +81,7 @@ import { formatBRL } from '../lib/money';
       }
       <p class="field-error" id="payment-error" data-error="payment" hidden>Escolha a forma de pagamento</p>
     </fieldset>
+    <p class="alert alert--info" data-promo-changed hidden></p>
     <dl class="summary" aria-live="polite" data-order-summary>
       <div><dt>Subtotal</dt><dd data-o-subtotal></dd></div>
       <div><dt>Entrega</dt><dd data-o-fee></dd></div>

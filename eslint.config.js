@@ -86,6 +86,17 @@ export default tseslint.config(
     },
   },
   {
+    // Promoções dependem da hora: o "agora" é sempre injetado (src/scripts/clock.ts), nunca lido escondido.
+    files: ['src/lib/**/*.ts', 'src/scripts/**/*.ts'],
+    ignores: ['src/scripts/clock.ts'],
+    rules: {
+      'no-restricted-properties': [
+        'error',
+        { object: 'Date', property: 'now', message: 'Use o relógio injetado (src/scripts/clock.ts).' },
+      ],
+    },
+  },
+  {
     files: ['scripts/**/*.mjs', '*.mjs', '*.js'],
     languageOptions: { globals: globals.node },
   },

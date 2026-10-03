@@ -3,10 +3,13 @@ import '../styles/fonts.css';
 import '../styles/tokens.css';
 import '../styles/global.css';
 import '../styles/app.css';
+import '../styles/promo.css';
 import syneUrl from '@fontsource/syne/files/syne-latin-800-normal.woff2?url';
 import lexendUrl from '@fontsource/lexend/files/lexend-latin-400-normal.woff2?url';
 import { CSP_META } from '../data/csp';
+import { FRETE_OUTUBRO } from '../data/promos';
 import { withBase } from '../data/url';
+import { promoPhase } from '../lib/promo';
 
 interface Props {
   title?: string;
@@ -21,11 +24,14 @@ const {
 // eslint-disable-next-line no-undef -- injetado via vite.define (astro.config.mjs)
 const deploy = __DEPLOY__;
 const siteUrl = deploy.siteUrl.replace(/\/+$/, '');
+// Fase da promoção de frete: palpite do build (o HTML estático não sabe quando será lido).
+// public/age-init.js corrige pelo relógio do aparelho antes da primeira pintura.
+const buildPromoPhase = promoPhase(FRETE_OUTUBRO, Date.now());
 const canonical = siteUrl ? new URL(withBase(''), siteUrl + '/').href : '';
 ---
 
 <!doctype html>
-<html lang="pt-BR" class="no-js">
+<html lang="pt-BR" class="no-js" data-promo={buildPromoPhase}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
