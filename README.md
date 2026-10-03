@@ -8,7 +8,7 @@ Site da **NOMAD puffs**, loja de pods descartáveis em **Palmas – TO**. O clie
 quantidade, informa a região de entrega e a forma de pagamento, e o pedido sai pronto no
 **WhatsApp (63) 98123-9498** — sem cadastro e sem pagamento online.
 
-<h3 align="center">🛍️ <a href="https://nomad-v1.vercel.app">Acessar o site → nomad-v1.vercel.app</a></h3>
+<h3 align="center">🛍️ <a href="https://nomadpuffs.com.br">Acessar o site → nomadpuffs.com.br</a></h3>
 
 > ⚠️ **Proibida a venda para menores de 18 anos.** O site tem verificação de idade obrigatória.
 > Leia também a seção [Aviso legal](#aviso-legal).
@@ -18,8 +18,8 @@ quantidade, informa a região de entrega e a forma de pagamento, e o pedido sai 
 ## Links rápidos
 | | Link |
 |---|---|
-| 🌐 **Site (produção, branch `main`)** | **https://nomad-v1.vercel.app** |
-| 🧪 Preview da branch em desenvolvimento | https://nomad-v1-git-feat-site-mvp-guilherme-s-projectssss.vercel.app <sub>(exige login na Vercel enquanto a Deployment Protection estiver ativa)</sub> |
+| 🌐 **Site (produção, Cloudflare Pages, branch `main`)** | **https://nomadpuffs.com.br** |
+| 👀 Visualização na Vercel (não comercial, noindex) | https://nomad-v1-nine.vercel.app |
 | 💬 Pedidos pelo WhatsApp | https://wa.me/5563981239498 |
 | 📊 Planilha de controle | [`planilha/NOMAD-puffs-controle.xlsx`](planilha/NOMAD-puffs-controle.xlsx) |
 | 📄 Catálogo oficial (PDF) | [`docs/catalogo.pdf`](docs/catalogo.pdf) |
@@ -138,13 +138,23 @@ npm run dev                 # http://localhost:4321
 | `npm run check` | Lint + tipos + testes + build (o mesmo que o CI) |
 
 ## Duas versões de deploy
-O **mesmo código** gera duas saídas:
+O **mesmo código** gera três saídas. A produção em **nomadpuffs.com.br** é a da Cloudflare Pages
+(plano gratuito, uso comercial permitido); a Vercel fica só para visualização.
+
+### 0. Cloudflare Pages — produção
+- Build: `npm run build:cloudflare` → `dist-cloudflare/` (gera `_headers` com CSP, segurança e cache, a partir de
+  [`deploy/cloudflare/headers.template`](deploy/cloudflare/headers.template); não gera `.htaccess`).
+- **`noindex` por padrão**; só libera os buscadores com `NOINDEX=false` explícito. Previews `*.pages.dev` são
+  sempre `noindex`.
+- Guia passo a passo (conectar o repositório, variáveis, domínio e DNS no Registro.br):
+  [`docs/deploy-cloudflare.md`](docs/deploy-cloudflare.md).
 
 ### 1. Vercel — preview
 - Build: `npm run build:vercel` → `dist-vercel/` (configurado em [`vercel.json`](vercel.json)).
 - **Sempre `noindex`**: não aparece no Google.
 - Projeto na Vercel: **`nomad-v1`**, já conectado a este repositório (configurações vêm do `vercel.json`).
-- Push/merge na `main` → atualiza a produção em **https://nomad-v1.vercel.app**.
+- Push/merge na `main` → atualiza **https://nomad-v1-nine.vercel.app** (o plano Hobby não permite uso comercial:
+  não usar como endereço da loja).
 - Push em outra branch → gera um preview em `nomad-v1-git-<branch>-guilherme-s-projectssss.vercel.app`.
 - Previews exigem login enquanto a **Deployment Protection** estiver ativa
   (Settings → Deployment Protection → Vercel Authentication → Disabled para liberar).

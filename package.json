@@ -1,14 +1,15 @@
 {
   "name": "nomad-puffs-site",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
   "engines": { "node": ">=22.12 <25" },
   "scripts": {
     "dev": "astro dev",
-    "build": "npm run build:vercel && npm run build:static",
+    "build": "npm run build:vercel && npm run build:static && npm run build:cloudflare",
     "build:vercel": "node scripts/build.mjs --target=vercel",
     "build:static": "node scripts/build.mjs --target=static",
+    "build:cloudflare": "node scripts/build.mjs --target=cloudflare",
     "package:static": "node scripts/build.mjs --target=static && node scripts/package-static.mjs",
     "preview:vercel": "node scripts/serve-static.mjs --dir dist-vercel --port 4321 --base /",
     "preview:static": "node scripts/serve-static.mjs --dir dist-static --port 4322",
