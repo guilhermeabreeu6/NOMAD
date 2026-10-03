@@ -47,12 +47,29 @@ describe('configuração de deploy', () => {
     }
   });
 
-  it('cloudflare: placeholder de noindex, previews *.pages.dev sempre noindex, cache só em /_astro/', () => {
+  it('cloudflare: placeholder de noindex, *.workers.dev sempre noindex, cache só em /_astro/', () => {
     expect(cfHeaders).toContain('{{NOINDEX_BLOCK}}');
-    expect(cfHeaders).toMatch(/https:\/\/:project\.pages\.dev\/\*\n\s+X-Robots-Tag: noindex, nofollow/);
+    expect(cfHeaders).toMatch(/https:\/\/:subdomain\.workers\.dev\/\*\n\s+X-Robots-Tag: noindex, nofollow/);
+    expect(cfHeaders).toMatch(/https:\/\/:version\.:subdomain\.workers\.dev\/\*\n\s+X-Robots-Tag: noindex, nofollow/);
     // Regras do _headers se somam: Cache-Control em /* duplicaria o valor em /_astro/*.
     expect(cfHeaders.match(/Cache-Control:/g)).toHaveLength(1);
     expect(cfHeaders).toMatch(/\/_astro\/\*\n\s+Cache-Control: public, max-age=31536000, immutable/);
+  });
+
+  it('wrangler.jsonc: Worker "nomad" servindo dist-cloudflare com a 404 do site', () => {
+    const json = read('wrangler.jsonc')
+      .split('\n')
+      .filter((l) => !l.trimStart().startsWith('//'))
+      .join('\n');
+    const cfg = JSON.parse(json) as {
+      name: string;
+      main?: string;
+      assets: { directory: string; not_found_handling: string };
+    };
+    expect(cfg.name).toBe('nomad');
+    expect(cfg.main).toBeUndefined();
+    expect(cfg.assets.directory).toBe('./dist-cloudflare');
+    expect(cfg.assets.not_found_handling).toBe('404-page');
   });
 
   it('vercel: noindex, framework nulo e dist-vercel', () => {

@@ -33,6 +33,7 @@ export default tseslint.config(
     ignores: [
       'dist*/**',
       '.astro/**',
+      '.wrangler/**',
       'node_modules/**',
       'test-results/**',
       'playwright-report/**',

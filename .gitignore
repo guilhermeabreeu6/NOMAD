@@ -3,6 +3,7 @@ dist/
 dist-*/
 .vercel/
 .astro/
+.wrangler/
 coverage/
 .env
 .env.*

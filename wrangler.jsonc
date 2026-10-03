@@ -1,0 +1,12 @@
+// Worker "nomad" (Cloudflare Workers Builds) — produção em nomadpuffs.com.br.
+// Só serve arquivos estáticos do build `npm run build:cloudflare` (sem código de Worker).
+// Sem este arquivo a Cloudflare autoconfigura um `astro build` genérico (sem _headers nem robots.txt).
+{
+  "name": "nomad",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist-cloudflare",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  }
+}
