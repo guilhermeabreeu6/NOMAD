@@ -1,5 +1,9 @@
 import { MODELS } from '../../src/data/catalog';
+import { SEM_PROMO } from '../instants';
 import { addToCart, decodeWaText, expect, openCart, test, WA_PHONE } from './fixtures';
+
+// Mensagem RN12 com taxas da tabela: relógio fora da promoção de frete (ver promo.spec.ts).
+test.use({ now: SEM_PROMO });
 
 const EXPECTED = [
   'Olá! Quero fazer um pedido na NOMAD puffs:',

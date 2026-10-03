@@ -1,0 +1,625 @@
+/* promo-frete-outubro: banner da home, landing /outubro e frete grátis no checkout (03-design seções 4-6).
+   Somente tokens de tokens.css. Sem style inline (CSP style-src 'self'). */
+
+/* Visibilidade por estado: html[data-promo] (gravado antes da pintura por public/age-init.js).
+   data-promo-only aceita lista separada por espaço ("ativa breve"). */
+html[data-promo='ativa'] [data-promo-only]:not([data-promo-only~='ativa']),
+html[data-promo='breve'] [data-promo-only]:not([data-promo-only~='breve']),
+html[data-promo='encerrada'] [data-promo-only]:not([data-promo-only~='encerrada']) {
+  display: none !important;
+}
+
+/* Landing sem ModelNav: compensa só o header fixo. */
+html:has(.promo-page) {
+  scroll-padding-top: calc(var(--header-h) + var(--space-3));
+}
+
+/* Header da landing: logo + "Ver catálogo" cabem em 320px */
+.promo-page .site-header .btn--text {
+  flex: none;
+  padding-inline: var(--space-2);
+  white-space: nowrap;
+}
+
+@media (max-width: 374px) {
+  .promo-page .site-header .wrap {
+    padding-inline: var(--space-4);
+    gap: var(--space-2);
+  }
+
+  .promo-page .site-header .logo,
+  .promo-page .site-header .logo__text {
+    gap: var(--space-1);
+  }
+
+  .promo-page .site-header .logo__icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .promo-page .site-header .logo__name {
+    font-size: 17px;
+  }
+
+  .promo-page .site-header .logo__puffs {
+    font-size: 13px;
+  }
+
+  .promo-page .site-header .btn--text {
+    font-size: var(--fs-small);
+  }
+}
+
+.inline-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--hit-min);
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
+/* Etiquetas */
+.tag {
+  display: inline-block;
+  justify-self: start;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.tag--accent {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+/* ---------- Banner da home (design 5) ---------- */
+.promo-banner-wrap {
+  margin-top: var(--space-4);
+}
+
+.promo-banner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-2) var(--space-3);
+  align-items: center;
+  padding: var(--space-4);
+  border: 1px solid var(--color-accent-line);
+  border-radius: var(--radius-md);
+  background: var(--color-accent-soft);
+  color: var(--color-text);
+  text-decoration: none;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    transform var(--dur-fast) var(--ease);
+}
+
+.promo-banner:hover {
+  border-color: var(--color-accent);
+}
+
+.promo-banner:active {
+  transform: scale(0.99);
+}
+
+.promo-banner__icon {
+  width: 28px;
+  height: 28px;
+  align-self: start;
+  color: var(--color-text);
+}
+
+.promo-banner__body {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.promo-banner__eyebrow {
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.promo-banner__title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 1.15;
+}
+
+.promo-banner__text {
+  font-size: var(--fs-small);
+  color: var(--color-text-muted);
+}
+
+.promo-banner__cta {
+  grid-column: 2;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+
+.promo-banner__arrow {
+  display: inline-block;
+  transition: transform var(--dur-fast) var(--ease);
+}
+
+.promo-banner:hover .promo-banner__arrow {
+  transform: translateX(4px);
+}
+
+@media (min-width: 640px) {
+  .promo-banner {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .promo-banner__icon {
+    align-self: center;
+  }
+
+  .promo-banner__cta {
+    grid-column: 3;
+  }
+}
+
+@media (min-width: 1024px) {
+  .promo-banner__title {
+    font-size: 24px;
+  }
+}
+
+/* ---------- Hero da landing (design 4.2) ---------- */
+.promo-hero {
+  min-height: 72dvh;
+}
+
+.promo-hero h1 > span {
+  display: block;
+}
+
+.promo-hero h1 .serif {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--fs-promo-serif);
+}
+
+/* fio horizontal antes do itálico, como no logo principal */
+.promo-hero h1 .serif::before {
+  content: '';
+  flex: none;
+  width: 64px;
+  height: 1px;
+  background: var(--color-line-strong);
+}
+
+.promo-hero h1:focus {
+  outline: none;
+}
+
+.promo-hero__text {
+  max-width: 38ch;
+}
+
+.period-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-field-border);
+  border-radius: var(--radius-full);
+  font-size: var(--fs-small);
+  font-weight: 600;
+}
+
+.period-badge svg,
+.promo-countdown svg,
+.promo-note svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.period-badge--off {
+  border-color: var(--color-line-strong);
+  color: var(--color-text-muted);
+}
+
+.promo-countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-small);
+}
+
+.promo-hero__actions {
+  width: 100%;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.promo-hero__actions .btn {
+  width: 100%;
+}
+
+.promo-note {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  max-width: 46ch;
+  font-size: var(--fs-small);
+  color: var(--color-text-muted);
+}
+
+.promo-note svg {
+  margin-top: 3px;
+}
+
+.promo-summary {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .promo-hero__actions {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .promo-hero__actions .btn {
+    width: auto;
+  }
+}
+
+@media (min-width: 900px) {
+  .promo-summary {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+  }
+
+  .promo-summary__price {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-4);
+    font-family: var(--font-display);
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .promo-summary__old {
+    font-size: 28px;
+    color: var(--color-text-muted);
+  }
+
+  .promo-summary__new {
+    font-size: var(--fs-price);
+    color: var(--color-accent);
+  }
+
+  .promo-summary__list {
+    border-top: 1px solid var(--color-line);
+  }
+
+  .promo-summary__list li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+    border-bottom: 1px solid var(--color-line);
+    font-size: var(--fs-small);
+  }
+
+  .promo-summary__list strong {
+    color: var(--color-accent);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+}
+
+/* ---------- Seções da landing ---------- */
+.promo-section {
+  padding-block: var(--space-7);
+}
+
+.section-head {
+  display: grid;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+.section-head h2,
+.cta-band h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-h2);
+  line-height: 1.1;
+}
+
+.section-head__text {
+  max-width: 60ch;
+  color: var(--color-text-muted);
+}
+
+/* Quadro de regiões (design 4.3) */
+.region-board {
+  display: grid;
+  gap: var(--space-5);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+.region-card {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+}
+
+.region-card--free {
+  border: 2px solid var(--color-accent);
+}
+
+.region-card h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.region-list {
+  border-top: 1px solid var(--color-line);
+}
+
+.region-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+  min-height: 48px;
+  padding-block: var(--space-2);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.region-row__name {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  overflow-wrap: normal;
+}
+
+.region-row__icon {
+  flex: none;
+}
+
+.region-row__icon--check {
+  width: 20px;
+  height: 20px;
+  color: var(--color-accent);
+}
+
+.region-row__icon--dash {
+  width: 12px;
+  height: 2px;
+  margin-inline: 4px;
+  background: var(--color-text-muted);
+}
+
+.region-row__fee {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.region-row__fee--normal {
+  font-weight: 600;
+}
+
+.region-row__fee--muted {
+  color: var(--color-text-muted);
+}
+
+.fee-old {
+  color: var(--color-text-muted);
+  font-size: var(--fs-small);
+  text-decoration: line-through;
+}
+
+.fee-new {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.region-help {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  margin-top: var(--space-5);
+}
+
+.region-help__icon {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  margin-top: 2px;
+  color: var(--color-text-muted);
+}
+
+@media (min-width: 640px) {
+  .region-board {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .region-card--free {
+    grid-column: 1 / -1;
+  }
+
+  .region-board--single {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 900px) {
+  .region-board {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .region-card--free {
+    grid-column: auto;
+  }
+
+  .region-board--single {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Como funciona (variante maior) */
+.steps--lg {
+  gap: var(--space-4);
+  font-size: var(--fs-body);
+  color: var(--color-text);
+}
+
+.steps--lg li {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.steps--lg li::before {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  margin-right: 0;
+}
+
+@media (min-width: 900px) {
+  .steps--lg {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: var(--space-6);
+  }
+
+  .steps--lg li {
+    flex-direction: column;
+  }
+}
+
+/* Vitrine estilo Capa */
+.price-list--capa {
+  max-width: 640px;
+}
+
+.price-list--capa a {
+  min-height: 56px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 20px;
+}
+
+.price-list--capa strong {
+  font-weight: 800;
+}
+
+.price-list__arrow {
+  display: inline-block;
+  margin-left: var(--space-2);
+}
+
+/* Regras */
+.fine-print {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 720px;
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  font-size: var(--fs-small);
+  color: var(--color-text);
+}
+
+.fine-print h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 20px;
+}
+
+.fine-print ul {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.fine-print li {
+  position: relative;
+  padding-left: var(--space-4);
+}
+
+.fine-print li::before {
+  content: '\00B7';
+  position: absolute;
+  left: 0;
+  color: var(--color-accent);
+  font-weight: 800;
+}
+
+/* CTA final */
+.cta-band {
+  position: relative;
+  overflow: hidden;
+  padding-block: var(--space-8) calc(var(--space-8) + var(--legal-h));
+  text-align: center;
+}
+
+.cta-band .wrap {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: var(--space-4);
+  justify-items: center;
+}
+
+.cta-band__text {
+  max-width: 46ch;
+  color: var(--color-text-muted);
+}
+
+@media (min-width: 640px) {
+  .cta-band__btn {
+    width: auto;
+    min-width: 280px;
+  }
+}
+
+/* ---------- Checkout: frete grátis (design 5.4) ---------- */
+.fee-chip--free {
+  border-color: var(--color-accent-line);
+  background: var(--color-accent-soft);
+}
+
+.fee-chip .fee-old {
+  margin-left: var(--space-1);
+}
+
+.summary dd.is-free {
+  color: var(--color-accent);
+  font-weight: 600;
+}

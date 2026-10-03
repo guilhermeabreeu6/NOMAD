@@ -9,6 +9,7 @@ import LiveRegion from '../components/LiveRegion.astro';
 import ModelNav from '../components/ModelNav.astro';
 import NoScriptNotice from '../components/NoScriptNotice.astro';
 import ProductCard from '../components/ProductCard.astro';
+import PromoBanner from '../components/PromoBanner.astro';
 import Watermark from '../components/Watermark.astro';
 import { MODELS, STORE } from '../data/catalog';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -25,6 +26,7 @@ const wa = `https://wa.me/${STORE.whatsappE164}`;
     <Header />
     <ModelNav />
     <main id="main">
+      <PromoBanner />
       <section class="hero" aria-labelledby="hero-title">
         <Watermark />
         <div class="wrap">

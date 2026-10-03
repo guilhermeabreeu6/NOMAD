@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  ARRANGE_AREAS,
   FLAVOR_TOKENS,
   MAX_QTY_PER_ITEM,
   MODELS,
@@ -7,6 +8,7 @@ import {
   PAYMENT_METHODS,
   REGIONS,
   STORE,
+  findArrangeArea,
   findFlavor,
   findModel,
   findPayment,
@@ -96,5 +98,18 @@ describe('catálogo', () => {
 
   it('todo modelo tem imagem', () => {
     for (const m of MODELS) expect(PRODUCT_IMAGES[m.id]).toBeDefined();
+  });
+
+  it('áreas a combinar (Araras, Caribe, Polinésia) fora da tabela de taxas e ids únicos', () => {
+    expect(ARRANGE_AREAS.map((a) => [a.id, a.label])).toEqual([
+      ['araras', 'Araras'],
+      ['caribe', 'Caribe'],
+      ['polinesia', 'Polinésia'],
+    ]);
+    const ids = [...REGIONS.map((r) => r.id), ...ARRANGE_AREAS.map((a) => a.id), OTHER_REGION_ID];
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(findArrangeArea('caribe')?.label).toBe('Caribe');
+    expect(findArrangeArea('lago-norte')).toBeUndefined();
+    expect(findRegion('araras')).toBeUndefined();
   });
 });

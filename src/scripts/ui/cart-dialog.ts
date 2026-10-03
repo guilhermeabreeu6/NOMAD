@@ -1,6 +1,7 @@
 import { findModel } from '../../data/catalog';
 import { clampQty, countUnits, lineKey, removeLine, resolveCart, setQty, subtotalCents, type ResolvedLine } from '../../lib/cart';
 import { formatBRL } from '../../lib/money';
+import type { Clock } from '../clock';
 import type { State, Store } from '../store';
 import { initCheckout } from './checkout';
 import { actionOf, formatCount, qs, qsa, setText } from './dom';
@@ -8,7 +9,7 @@ import type { Announcer } from './live-region';
 
 type Step = 'cart' | 'checkout';
 
-export function initCartDialog(store: Store, live: Announcer): void {
+export function initCartDialog(store: Store, live: Announcer, clock: Clock): void {
   const dialog = qs<HTMLDialogElement>(document, '[data-cart-dialog]');
   const title = qs(dialog, '[data-title]');
   const emptyEl = qs(dialog, '[data-empty]');
@@ -32,7 +33,12 @@ export function initCartDialog(store: Store, live: Announcer): void {
   const rows = new Map<string, HTMLElement>();
   let lastUnits = -1;
 
-  const checkout = initCheckout({ dialog, store, live, goStep: (s) => {
+  const checkout = initCheckout({
+    dialog,
+    store,
+    live,
+    clock,
+    goStep: (s) => {
       showStep(s, true);
     },
   });

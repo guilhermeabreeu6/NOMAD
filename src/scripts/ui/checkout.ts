@@ -1,16 +1,20 @@
-import { findPayment } from '../../data/catalog';
+import { findPayment, findRegion } from '../../data/catalog';
 import { resolveCart, subtotalCents } from '../../lib/cart';
 import { formatBRL } from '../../lib/money';
-import { computeTotals, parseRegionChoice, validateCheckout } from '../../lib/order';
+import { computeTotals, parseRegionChoice, quoteDelivery, validateCheckout, type DeliveryQuote } from '../../lib/order';
 import { buildOrderMessage, buildWhatsAppUrl } from '../../lib/whatsapp';
+import type { Clock } from '../clock';
 import type { Store } from '../store';
 import { actionOf, qs, qsa, setDescribedBy, setText } from './dom';
 import type { Announcer } from './live-region';
+import { PROMO_PHASE_EVENT } from './promo-state';
 
 interface Options {
   dialog: HTMLDialogElement;
   store: Store;
   live: Announcer;
+  /** Relógio injetado (produção: Date.now; E2E: relógio simulado). */
+  clock: Clock;
   goStep: (step: 'cart' | 'checkout') => void;
 }
 
@@ -19,7 +23,12 @@ export interface CheckoutController {
   reset(): void;
 }
 
-export function initCheckout({ dialog, store, live, goStep }: Options): CheckoutController {
+/** Assinatura da cotação mostrada: se mudar entre a tela e o envio, o envio é barrado e a tela atualizada. */
+function quoteKey(q: DeliveryQuote): string {
+  return q.kind === 'fixed' || q.kind === 'free' ? `${q.kind}:${String(q.feeCents)}` : q.kind;
+}
+
+export function initCheckout({ dialog, store, live, clock, goStep }: Options): CheckoutController {
   const form = qs<HTMLFormElement>(dialog, '[data-step="checkout"]');
   const foot = qs(dialog, '[data-step-foot="checkout"]');
   const select = qs<HTMLSelectElement>(form, '[data-region]');
@@ -28,6 +37,8 @@ export function initCheckout({ dialog, store, live, goStep }: Options): Checkout
   const regionError = qs(form, '[data-error="region"]');
   const paymentError = qs(form, '[data-error="payment"]');
   const summaryError = qs(form, '[data-error-summary]');
+  const promoChanged = qs(form, '[data-promo-changed]');
+  const regionOptions = qsa<HTMLOptionElement>(select, 'option[data-label-base]');
   const feeChip = qs(form, '[data-fee-chip]');
   const linesEl = qs(form, '[data-summary-lines]');
   const oSubtotal = qs(form, '[data-o-subtotal]');
@@ -42,11 +53,13 @@ export function initCheckout({ dialog, store, live, goStep }: Options): Checkout
   const orderText = qs<HTMLTextAreaElement>(sent, '[data-order-text]');
   const sendLabel = qs(foot, '[data-send-label]');
   let message = '';
+  let shownQuote = '';
 
   const clearErrors = (): void => {
     regionError.hidden = true;
     paymentError.hidden = true;
     summaryError.hidden = true;
+    promoChanged.hidden = true;
     select.removeAttribute('aria-invalid');
     paymentGroup.removeAttribute('aria-invalid');
     setDescribedBy(select, regionError.id, false);
@@ -66,7 +79,11 @@ export function initCheckout({ dialog, store, live, goStep }: Options): Checkout
     const lines = resolveCart(state.cart);
     const subtotal = subtotalCents(lines);
     const region = parseRegionChoice(state.regionId);
-    const totals = computeTotals(subtotal, region);
+    const now = clock();
+    const totals = computeTotals(subtotal, region, now);
+    const { quote } = totals;
+    shownQuote = quoteKey(quote);
+    renderRegionOptions(now);
 
     linesEl.replaceChildren(
       ...lines.map((l) => {
@@ -76,21 +93,58 @@ export function initCheckout({ dialog, store, live, goStep }: Options): Checkout
       }),
     );
     setText(oSubtotal, formatBRL(subtotal));
-    if (region?.kind === 'region' && totals.feeCents !== null) {
-      setText(oFee, formatBRL(totals.feeCents));
-      feeChip.hidden = false;
-      setText(feeChip, `Taxa de entrega: ${formatBRL(totals.feeCents)}`);
-    } else if (region?.kind === 'other') {
-      setText(oFee, 'a combinar');
-      feeChip.hidden = false;
-      setText(feeChip, 'Taxa de entrega: a combinar');
-    } else {
-      setText(oFee, 'escolha a região');
-      feeChip.hidden = true;
+    oFee.classList.toggle('is-free', quote.kind === 'free');
+    feeChip.classList.toggle('fee-chip--free', quote.kind === 'free');
+    switch (quote.kind) {
+      case 'free': {
+        setText(oFee, 'Grátis');
+        feeChip.hidden = false;
+        // O riscado não é anunciado por leitores de tela: o valor normal vai também em texto oculto.
+        const old = document.createElement('s');
+        old.className = 'fee-old';
+        old.setAttribute('aria-hidden', 'true');
+        old.textContent = formatBRL(quote.baseFeeCents);
+        const sr = document.createElement('span');
+        sr.className = 'visually-hidden';
+        sr.textContent = `, taxa normal ${formatBRL(quote.baseFeeCents)}`;
+        feeChip.replaceChildren(`Taxa de entrega: grátis (promoção de outubro) `, old, sr);
+        break;
+      }
+      case 'fixed':
+        setText(oFee, formatBRL(quote.feeCents));
+        feeChip.hidden = false;
+        setText(
+          feeChip,
+          `Taxa de entrega: ${formatBRL(quote.feeCents)}${quote.excludedFrom ? ' (região fora da promoção)' : ''}`,
+        );
+        break;
+      case 'arrange':
+        setText(oFee, 'a combinar');
+        feeChip.hidden = false;
+        setText(feeChip, 'Taxa de entrega: a combinar');
+        break;
+      case 'unselected':
+        setText(oFee, 'escolha a região');
+        feeChip.hidden = true;
+        break;
     }
     setText(oTotalLabel, region ? 'Total' : 'Total parcial');
     setText(oTotal, totals.feeToArrange ? `${formatBRL(subtotal)} + entrega a combinar` : formatBRL(totals.totalCents));
   }
+
+  /** Opções das regiões: "- Grátis em outubro" durante a promoção, taxa normal fora dela. */
+  function renderRegionOptions(now: number): void {
+    for (const opt of regionOptions) {
+      const region = findRegion(opt.value);
+      const base = opt.dataset['labelBase'] ?? opt.text;
+      const q = region ? quoteDelivery({ kind: 'region', region }, now) : null;
+      const text = q?.kind === 'free' ? `${region?.label ?? ''} - ${q.promo.optionLabel}` : base;
+      if (opt.text !== text) opt.text = text;
+    }
+  }
+
+  // Virada da promoção com o drawer aberto (timer em promo-state) ou volta do segundo plano.
+  document.addEventListener(PROMO_PHASE_EVENT, render);
 
   select.addEventListener('change', () => {
     store.setRegion(select.value || null);
@@ -146,7 +200,23 @@ export function initCheckout({ dialog, store, live, goStep }: Options): Checkout
     const region = parseRegionChoice(state.regionId);
     const payment = state.paymentId ? findPayment(state.paymentId) : undefined;
     if (!region || !payment) return;
-    message = buildOrderMessage({ lines, region, payment });
+    const nowMs = clock();
+    // Recheque no envio: se a promoção virou entre a tela e o clique, não envia uma mensagem diferente
+    // do que estava na tela. Atualiza, avisa e o próximo clique envia.
+    const quote = quoteDelivery(region, nowMs);
+    if (quoteKey(quote) !== shownQuote) {
+      render();
+      const text =
+        quote.kind === 'free'
+          ? 'A promoção de frete começou. O total foi atualizado.'
+          : 'A promoção de frete terminou. O total foi atualizado.';
+      setText(promoChanged, text);
+      promoChanged.hidden = false;
+      live.announce(text);
+      promoChanged.scrollIntoView({ block: 'nearest' });
+      return;
+    }
+    message = buildOrderMessage({ lines, region, payment, nowMs });
     const url = buildWhatsAppUrl(message);
     // Síncrono dentro do gesto do usuário: evita bloqueio de pop-up.
     window.open(url, '_blank', 'noopener,noreferrer');

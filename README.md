@@ -95,7 +95,12 @@ Fonte: [`docs/catalogo.pdf`](docs/catalogo.pdf). No código: [`src/data/catalog.
 | Bertaville e Aurenys | R$ 30 |
 | Taquaralto e Lago Sul | R$ 35 |
 | Taquari | R$ 35 |
+| Araras, Caribe, Polinésia | combinar no WhatsApp |
 | Outra região | combinar no WhatsApp |
+
+**Promoção de outubro/2026:** frete grátis de 01/10 a 31/10 (até 23h59, horário de Palmas) nas cinco primeiras
+regiões da tabela; as demais pagam a taxa normal ou combinam no WhatsApp. Página: `/outubro`. Configuração em
+[`src/data/promos.ts`](src/data/promos.ts); detalhes em `docs/squad/promo-frete-outubro/`.
 
 ## Stack
 | Camada | Escolha | Por quê |

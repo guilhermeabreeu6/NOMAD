@@ -12,6 +12,16 @@ interface Fixtures {
   fresh: Page;
 }
 
+interface Options {
+  /**
+   * Relógio simulado (epoch ms) instalado ANTES da navegação (age-init.js já lê o relógio falso).
+   * undefined = relógio real. O tempo continua correndo a partir desse instante.
+   */
+  now: number | undefined;
+  /** Página inicial dos fixtures app/fresh, relativa ao baseURL (ex.: 'outubro/'). */
+  startPath: string;
+}
+
 async function instrument(page: Page, confirmed: boolean): Promise<() => Promise<void>> {
   const errors: string[] = [];
   page.on('console', (m) => {
@@ -39,16 +49,20 @@ async function instrument(page: Page, confirmed: boolean): Promise<() => Promise
   };
 }
 
-export const test = base.extend<Fixtures>({
-  app: async ({ page }, use) => {
+export const test = base.extend<Fixtures & Options>({
+  now: [undefined, { option: true }],
+  startPath: ['./', { option: true }],
+  app: async ({ page, now, startPath }, use) => {
     const check = await instrument(page, true);
-    await page.goto('./');
+    if (now !== undefined) await page.clock.install({ time: now });
+    await page.goto(startPath);
     await use(page);
     await check();
   },
-  fresh: async ({ page }, use) => {
+  fresh: async ({ page, now, startPath }, use) => {
     const check = await instrument(page, false);
-    await page.goto('./');
+    if (now !== undefined) await page.clock.install({ time: now });
+    await page.goto(startPath);
     await use(page);
     await check();
   },

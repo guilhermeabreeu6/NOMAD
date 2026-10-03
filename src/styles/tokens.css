@@ -18,6 +18,9 @@
   --color-success: #5ed6ae;
   --color-focus: #f5e9cf;
   --color-overlay: rgba(10, 10, 12, 0.72);
+  /* promo-frete-outubro (03-design 6.1) */
+  --color-accent-soft: rgba(227, 138, 78, 0.12);
+  --color-accent-line: rgba(227, 138, 78, 0.45);
 
   --flavor-pineapple: #f2ca50;
   --flavor-grape: #8e5bd9;
@@ -46,6 +49,7 @@
   --fs-body: 16px;
   --fs-small: 14px;
   --fs-label: 12px;
+  --fs-promo-serif: 40px;
 
   --space-1: 4px;
   --space-2: 8px;
@@ -90,5 +94,6 @@
     --fs-model: 40px;
     --fs-price: 48px;
     --fs-h2: 36px;
+    --fs-promo-serif: 64px;
   }
 }

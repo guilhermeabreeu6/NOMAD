@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { REGIONS } from '../../src/data/catalog';
 import { resolveCart } from '../../src/lib/cart';
 import { computeTotals, parseRegionChoice, validateCheckout } from '../../src/lib/order';
+import { SEM_PROMO } from '../instants';
 
 const lines = resolveCart([{ modelId: 'v155', flavorId: 'menthol', qty: 1 }]); // R$ 110,00
 
@@ -16,7 +17,7 @@ describe('parseRegionChoice', () => {
   });
 });
 
-describe('computeTotals', () => {
+describe('computeTotals (fora da promoção)', () => {
   const expected: Record<string, number> = {
     'q700s-200': 11800,
     'q300n-600n': 12000,
@@ -30,20 +31,20 @@ describe('computeTotals', () => {
   };
 
   it.each(REGIONS.map((r) => [r.id, r.feeCents] as const))('região %s (taxa %i)', (id, fee) => {
-    const t = computeTotals(11000, parseRegionChoice(id));
+    const t = computeTotals(11000, parseRegionChoice(id), SEM_PROMO);
     expect(t.feeCents).toBe(fee);
     expect(t.totalCents).toBe(expected[id]);
     expect(t.feeToArrange).toBe(false);
   });
 
   it('outra região: taxa a combinar, total = subtotal', () => {
-    const t = computeTotals(11000, { kind: 'other' });
-    expect(t).toEqual({ subtotalCents: 11000, feeCents: null, totalCents: 11000, feeToArrange: true });
+    const t = computeTotals(11000, { kind: 'other' }, SEM_PROMO);
+    expect(t).toMatchObject({ subtotalCents: 11000, feeCents: null, totalCents: 11000, feeToArrange: true });
   });
 
   it('sem região: total parcial', () => {
-    const t = computeTotals(11000, null);
-    expect(t).toEqual({ subtotalCents: 11000, feeCents: null, totalCents: 11000, feeToArrange: false });
+    const t = computeTotals(11000, null, SEM_PROMO);
+    expect(t).toMatchObject({ subtotalCents: 11000, feeCents: null, totalCents: 11000, feeToArrange: false });
   });
 });
 

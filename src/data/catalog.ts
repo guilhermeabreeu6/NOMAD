@@ -33,6 +33,12 @@ export interface Region {
   readonly feeCents: number;
 }
 
+/** Área atendida sem taxa tabelada: a taxa é combinada no WhatsApp. Não entra em REGIONS. */
+export interface ArrangeArea {
+  readonly id: string;
+  readonly label: string;
+}
+
 export interface PaymentMethod {
   readonly id: 'pix' | 'debito' | 'credito';
   readonly label: string;
@@ -120,6 +126,12 @@ export const REGIONS: readonly Region[] = [
   { id: 'taquari', label: 'Taquari', feeCents: 3500 },
 ];
 
+export const ARRANGE_AREAS: readonly ArrangeArea[] = [
+  { id: 'araras', label: 'Araras' },
+  { id: 'caribe', label: 'Caribe' },
+  { id: 'polinesia', label: 'Polinésia' },
+];
+
 export const PAYMENT_METHODS: readonly PaymentMethod[] = [
   { id: 'pix', label: 'PIX' },
   { id: 'debito', label: 'Cartão de débito' },
@@ -136,6 +148,10 @@ export function findFlavor(model: Model, flavorId: string): Flavor | undefined {
 
 export function findRegion(id: string): Region | undefined {
   return REGIONS.find((r) => r.id === id);
+}
+
+export function findArrangeArea(id: string): ArrangeArea | undefined {
+  return ARRANGE_AREAS.find((a) => a.id === id);
 }
 
 export function findPayment(id: string): PaymentMethod | undefined {

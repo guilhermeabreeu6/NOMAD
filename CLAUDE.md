@@ -42,6 +42,17 @@ Taxa de entrega em Palmas:
 | Taquaralto e Lago Sul | R$ 35 |
 | Taquari | R$ 35 |
 
+Áreas atendidas sem taxa tabelada (taxa a combinar no WhatsApp, `ARRANGE_AREAS`): Araras, Caribe, Polinésia.
+Bairro não listado: "Outra região" (a combinar).
+
+Promoção de frete em vigor (`src/data/promos.ts`, lógica em `src/lib/promo.ts`, docs em `docs/squad/promo-frete-outubro/`):
+- **Frete grátis de outubro** — de 01/10/2026 00:00 até 31/10/2026 23:59:59 (Palmas, UTC-3; intervalo `[início, fim)`).
+- Grátis: Quadras 700 Sul a 200 Norte/Sul, 300 Norte a 600 Norte, 800 a 1200, 1300 a 1500 Sul e Santo Amaro.
+- Taxa normal: Lago Norte, Bertaville, Aurenys, Taquaralto, Lago Sul, Taquari. A combinar: Araras, Caribe, Polinésia e outros bairros.
+- Landing `/outubro` + banner na home; estado `html[data-promo]` (breve/ativa/encerrada) gravado por `public/age-init.js`
+  (instantes duplicados ali em epoch ms; teste trava a igualdade). Nunca usar `Date.now()` em `src/lib`/`src/scripts`
+  fora de `src/scripts/clock.ts` (lint).
+
 Formas de pagamento: PIX, cartão de débito, cartão de crédito (na entrega).
 
 ## Identidade visual (assets/brand, assets/produtos)
