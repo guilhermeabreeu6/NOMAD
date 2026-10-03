@@ -4,6 +4,11 @@
 {
   "name": "nomad",
   "compatibility_date": "2026-10-01",
+  // Domínios ficam aqui: cada deploy substitui a configuração feita no painel.
+  "routes": [
+    { "pattern": "nomadpuffs.com.br", "custom_domain": true },
+    { "pattern": "www.nomadpuffs.com.br", "custom_domain": true }
+  ],
   "assets": {
     "directory": "./dist-cloudflare",
     "not_found_handling": "404-page",
