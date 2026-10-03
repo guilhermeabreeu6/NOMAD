@@ -32,8 +32,9 @@ Depois de salvar: **Implantações → Nova implantação / Retry** (ou faça qu
    (`xxx.ns.cloudflare.com`) na **Visão geral** do domínio.
 2. No https://registro.br: **nomadpuffs.com.br → DNS → Alterar servidores DNS** → cole os 2 e salve.
    Propagação: de minutos a algumas horas (a Cloudflare avisa por e-mail).
-3. No Worker **nomad → Domínios → Adicionar domínio personalizado**: `nomadpuffs.com.br` e `www.nomadpuffs.com.br`.
-   A Cloudflare cria o DNS e o HTTPS sozinha (não crie registros A/CNAME à mão).
+3. Os domínios `nomadpuffs.com.br` e `www.nomadpuffs.com.br` estão em `routes` no `wrangler.jsonc`: cada deploy os liga
+   ao Worker e a Cloudflare cria o DNS e o HTTPS sozinha. **Não** configure domínios só pelo painel (o próximo deploy
+   os remove) e não crie registros A/CNAME à mão.
 4. Redirecionar `www` → raiz: **Regras → Regras de redirecionamento → modelo "Redirect from WWW to root"** (301).
 5. **SSL/TLS → Certificados de borda**: ligue **Sempre usar HTTPS**.
 6. Os registros MX/SPF/DMARC que já existem no DNS bloqueiam e-mail falso em nome do domínio: manter.

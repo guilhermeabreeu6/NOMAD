@@ -64,12 +64,18 @@ describe('configuração de deploy', () => {
     const cfg = JSON.parse(json) as {
       name: string;
       main?: string;
+      routes: { pattern: string; custom_domain: boolean }[];
       assets: { directory: string; not_found_handling: string };
     };
     expect(cfg.name).toBe('nomad');
     expect(cfg.main).toBeUndefined();
     expect(cfg.assets.directory).toBe('./dist-cloudflare');
     expect(cfg.assets.not_found_handling).toBe('404-page');
+    // Sem routes no arquivo, cada deploy desliga o domínio configurado no painel.
+    expect(cfg.routes).toEqual([
+      { pattern: 'nomadpuffs.com.br', custom_domain: true },
+      { pattern: 'www.nomadpuffs.com.br', custom_domain: true },
+    ]);
   });
 
   it('vercel: noindex, framework nulo e dist-vercel', () => {
