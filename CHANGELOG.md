@@ -2,6 +2,15 @@
 
 Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/). Versionamento: [SemVer](https://semver.org/lang/pt-BR/).
 
+## [0.2.1] - 2026-10-03
+### Adicionado
+- Alvo de build `cloudflare` (`npm run build:cloudflare` → `dist-cloudflare/`) para produção na Cloudflare Pages em
+  nomadpuffs.com.br: gera `_headers` com a mesma CSP e os mesmos cabeçalhos de segurança dos outros alvos, cache longo
+  só em `/_astro/*`, noindex por padrão e previews `*.pages.dev` sempre noindex.
+- Guia `docs/deploy-cloudflare.md` (projeto Pages, variáveis, domínio e DNS no Registro.br, verificação).
+### Alterado
+- README e CLAUDE.md: produção passa a ser a Cloudflare Pages; link da Vercel corrigido para nomad-v1-nine.vercel.app.
+
 ## [0.2.0] - 2026-10-03
 ### Adicionado
 - Promoção de frete grátis de outubro (`promo-frete-outubro`): de 01/10/2026 00:00 a 31/10/2026 23:59:59

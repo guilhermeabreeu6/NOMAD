@@ -12,14 +12,16 @@ Slogan: "VAPOR SEM FRONTEIRAS". Proibida a venda para menores de 18 anos.
 - Node portátil: `export PATH="$HOME/.local/node:$PATH"` antes de qualquer `npm`/`npx` (Node v24 LTS, npm 11)
 - instalar: `npm ci` (+ `npm run test:e2e:install` uma vez, para o Chromium)
 - dev:      `npm run dev`
-- build:    `npm run build` (gera `dist-vercel/` e `dist-static/`; ou `build:vercel` / `build:static`)
+- build:    `npm run build` (gera `dist-vercel/`, `dist-static/` e `dist-cloudflare/`; ou `build:vercel` / `build:static` / `build:cloudflare`)
 - teste:    `npm test` (unitários) · `npm run test:e2e` (E2E)
 - lint:     `npm run lint` · `npm run typecheck` · tudo junto: `npm run check`
 
-## Duas versões de deploy (mesmo código-fonte)
-1. **Vercel** — preview público para visualização (`vercel.json` na raiz).
-2. **Domínio próprio** — build estático genérico para qualquer hospedagem (Apache/Nginx/cPanel),
-   sem dependência de recursos da Vercel. Ainda não há domínio: usar URL base configurável.
+## Versões de deploy (mesmo código-fonte)
+0. **Cloudflare Pages — PRODUÇÃO em nomadpuffs.com.br** (plano gratuito, uso comercial permitido).
+   `npm run build:cloudflare` → `dist-cloudflare/` + `_headers` (de `deploy/cloudflare/headers.template`).
+   noindex por padrão (só `NOINDEX=false` libera); guia em `docs/deploy-cloudflare.md`.
+1. **Vercel** — só visualização (`nomad-v1-nine.vercel.app`, `vercel.json`); Hobby não permite uso comercial.
+2. **Estático genérico** — `dist-static/` com `.htaccess` para Apache/Nginx/cPanel (contingência).
 
 ## Dados do catálogo (fonte: docs/catalogo.pdf)
 | Modelo | Preço | Sabores |

@@ -18,10 +18,12 @@ const globalHeaders = Object.fromEntries(
 );
 const htaccess = read('deploy/static/htaccess.template');
 const nginx = read('deploy/static/nginx.conf.example');
+const cfHeaders = read('deploy/cloudflare/headers.template');
 
 describe('configuração de deploy', () => {
-  it('CSP idêntica em csp.ts, vercel.json, .htaccess e nginx', () => {
+  it('CSP idêntica em csp.ts, vercel.json, .htaccess, nginx e _headers (Cloudflare)', () => {
     expect(globalHeaders['Content-Security-Policy']).toBe(CSP);
+    expect(cfHeaders).toContain(`  Content-Security-Policy: ${CSP}\n`);
     expect(htaccess).toContain(`"${CSP}"`);
     expect(nginx).toContain(`"${CSP}"`);
   });
@@ -30,7 +32,7 @@ describe('configuração de deploy', () => {
     expect(CSP).not.toMatch(/unsafe-/);
   });
 
-  it('mesmos headers de segurança nos dois alvos', () => {
+  it('mesmos headers de segurança em todos os alvos', () => {
     for (const key of [
       'X-Content-Type-Options',
       'Referrer-Policy',
@@ -41,7 +43,16 @@ describe('configuração de deploy', () => {
       const value = globalHeaders[key];
       expect(value, key).toBeTruthy();
       expect(htaccess).toContain(`${key} "${value ?? ''}"`);
+      expect(cfHeaders).toContain(`  ${key}: ${value ?? ''}\n`);
     }
+  });
+
+  it('cloudflare: placeholder de noindex, previews *.pages.dev sempre noindex, cache só em /_astro/', () => {
+    expect(cfHeaders).toContain('{{NOINDEX_BLOCK}}');
+    expect(cfHeaders).toMatch(/https:\/\/:project\.pages\.dev\/\*\n\s+X-Robots-Tag: noindex, nofollow/);
+    // Regras do _headers se somam: Cache-Control em /* duplicaria o valor em /_astro/*.
+    expect(cfHeaders.match(/Cache-Control:/g)).toHaveLength(1);
+    expect(cfHeaders).toMatch(/\/_astro\/\*\n\s+Cache-Control: public, max-age=31536000, immutable/);
   });
 
   it('vercel: noindex, framework nulo e dist-vercel', () => {
